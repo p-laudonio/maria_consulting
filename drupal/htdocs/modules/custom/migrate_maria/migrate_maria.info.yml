@@ -1,0 +1,8 @@
+name: migrate_maria
+type: module
+description: Migrate Maria Consulting content to D8
+core: 8.x
+package: Custom
+dependencies:
+  - migrate_plus
+  - migrate_drupal

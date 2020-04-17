@@ -1,0 +1,23 @@
+{% if page.footer %}
+    {% block footer %}
+        <footer role="contentinfo">
+            <div class="footer {{ container }}" id="footer">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="border-top"></div>
+                        <div class="social-icons">
+                            <span>Stay Connected</span>
+                            <ul>
+                                <li><a href="#" class="icon-1"></a></li>
+                                <li><a href="#" class="icon-2"></a></li>
+                                <li><a href="#" class="icon-3"></a></li>
+                                <li><a href="#" class="icon-4"></a></li>
+                            </ul>
+                        </div>
+                        <span><a href="/" class="footer-logo"><span>maria</span>consulting</a><span>&copy; 2017, 6 Elm Court, 20 Brombley Road SE6 2TX London | <a href="/privacy-policy" rel="noindex, nofollow">Privacy Policy</a><br/></span></span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    {% endblock %}
+{% endif %}

@@ -1,0 +1,92 @@
+uuid: ce0dea83-4a78-4cc5-be86-3fe98c4eb19a
+langcode: en
+status: true
+dependencies: {  }
+id: upgrade_d7_node_service
+migration_tags:
+  - 'Drupal 7'
+migration_group: migrate_maria
+label: 'Nodes (Service)'
+source:
+  plugin: d7_node
+  node_type: service
+process:
+  nid: nid
+  vid: vid
+  langcode:
+    plugin: default_value
+    source: language
+    default_value: und
+  title: title
+  uid: node_uid
+  status: status
+  created: created
+  changed: changed
+  promote: promote
+  sticky: sticky
+  revision_uid: revision_uid
+  revision_log: log
+  revision_timestamp: timestamp
+  body:
+    plugin: iterator
+    source: body
+    process:
+      value: value
+      format:
+        -
+          plugin: static_map
+          bypass: true
+          source: format
+          map:
+            - null
+        -
+          plugin: skip_on_empty
+          method: process
+        -
+          plugin: migration
+          migration:
+            - upgrade_d6_filter_format
+            - upgrade_d7_filter_format
+          source: format
+  field_teaser:
+    plugin: iterator
+    source: field_teaser
+    process:
+      value: value
+      format:
+        -
+          plugin: static_map
+          bypass: true
+          source: format
+          map:
+            - null
+        -
+          plugin: skip_on_empty
+          method: process
+        -
+          plugin: migration
+          migration:
+            - upgrade_d6_filter_format
+            - upgrade_d7_filter_format
+          source: format
+  field_tags:
+    plugin: iterator
+    source: field_tags
+    process:
+      target_id: tid
+  field_image:
+    plugin: iterator
+    source: field_image
+    process:
+      target_id: fid
+      alt: alt
+      title: title
+      width: width
+      height: height
+destination:
+  plugin: 'entity:node'
+  default_bundle: service
+migration_dependencies:
+  required:
+    - upgrade_d7_taxonomy_term_tags
+  optional: {  }

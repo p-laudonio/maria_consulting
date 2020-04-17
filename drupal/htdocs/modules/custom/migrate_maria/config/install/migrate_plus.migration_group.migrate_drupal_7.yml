@@ -1,0 +1,12 @@
+uuid: 468aea49-216a-4b9c-ad2c-d14ed4c3e8bb
+langcode: en
+status: true
+dependencies: {  }
+id: migrate_maria
+label: 'Import Maria Consulting Content from Drupal 7'
+description: 'Migrations originally generated from drush migrate-upgrade --configure-only'
+source_type: 'Drupal 7'
+module: null
+shared_configuration:
+  source:
+    key: maria_d7

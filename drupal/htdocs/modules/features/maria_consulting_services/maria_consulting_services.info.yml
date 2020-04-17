@@ -1,0 +1,19 @@
+name: services
+description: 'Content type and Taxonomy: service'
+type: module
+core: 8.x
+dependencies:
+  - comment
+  - field
+  - image
+  - maria_consulting_service
+  - menu_ui
+  - metatag
+  - node
+  - path
+  - rdf
+  - taxonomy
+  - text
+  - user
+version: 8.x-1.0
+package: 'Maria Consulting'

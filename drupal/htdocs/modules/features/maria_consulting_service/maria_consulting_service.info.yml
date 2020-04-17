@@ -1,0 +1,14 @@
+name: Service
+description: 'Provides Service content type and related configuration. This type is used to populate the Services section.'
+type: module
+core: 8.x
+dependencies:
+  - field
+  - image
+  - menu_ui
+  - metatag
+  - node
+  - path
+  - text
+  - user
+package: 'Maria Consulting'
