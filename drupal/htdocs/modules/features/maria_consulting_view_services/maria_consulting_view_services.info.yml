@@ -1,0 +1,15 @@
+name: 'View Services'
+description: 'This is a custom view for Taxonomy / Term / Services'
+type: module
+core: 8.x
+dependencies:
+  - image
+  - maria_consulting_service
+  - maria_consulting_services
+  - node
+  - taxonomy
+  - text
+  - user
+  - views
+version: 8.x-1.0
+package: 'Maria Consulting'

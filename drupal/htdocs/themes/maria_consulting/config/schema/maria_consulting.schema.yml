@@ -1,0 +1,5 @@
+# Schema for the theme setting configuration file of the Maria Consulting theme.
+
+maria_consulting.settings:
+  type: theme_settings
+  label: 'Maria Consulting settings'

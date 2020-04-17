@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * Implements hook_uninstall().
+ */
+function migrate_maria_types_uninstall() {
+  \Drupal::configFactory()->getEditable('migrate_plus.migration_group.migrate_maria_types')->delete();
+  \Drupal::configFactory()->getEditable('migrate_plus.migration.upgrade_d7_menu_links')->delete();
+  \Drupal::configFactory()->getEditable('migrate_plus.migration.upgrade_d7_field_formatter_settings')->delete();
+  \Drupal::configFactory()->getEditable('migrate_plus.migration.upgrade_d7_menu')->delete();
+  \Drupal::configFactory()->getEditable('migrate_plus.migration.upgrade_d7_field_instance_widget_settings')->delete();
+  \Drupal::configFactory()->getEditable('migrate_plus.migration.upgrade_d7_node_article')->delete();
+  \Drupal::configFactory()->getEditable('migrate_plus.migration.upgrade_d7_field_instance')->delete();
+  \Drupal::configFactory()->getEditable('migrate_plus.migration.upgrade_d7_node_page')->delete();
+  \Drupal::configFactory()->getEditable('migrate_plus.migration.upgrade_d7_field')->delete();
+  \Drupal::configFactory()->getEditable('migrate_plus.migration.upgrade_d7_node_settings')->delete();
+  \Drupal::configFactory()->getEditable('migrate_plus.migration.upgrade_d7_global_theme_settings')->delete();
+  \Drupal::configFactory()->getEditable('migrate_plus.migration.upgrade_d7_node_title_label')->delete();
+  \Drupal::configFactory()->getEditable('migrate_plus.migration.upgrade_d7_image_settings')->delete();
+  \Drupal::configFactory()->getEditable('migrate_plus.migration.upgrade_d7_node_type')->delete();
+  \Drupal::configFactory()->getEditable('migrate_plus.migration.upgrade_d7_image_styles')->delete();
+  \Drupal::configFactory()->getEditable('migrate_plus.migration.upgrade_menu_settings')->delete();
+}

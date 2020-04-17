@@ -1,0 +1,70 @@
+id: maria_service_term
+label: Maria Consulting Drupal 7 service terms
+migration_group: custom
+dependencies:
+  enforced:
+    module:
+      - custom_migrate
+
+source:
+  plugin: csv
+  # Full path to the file.
+  path: /var/www/vhosts/maria-consulting-migrated.dev/modules/custom/artifacts/terms_services.csv
+  # The number of rows at the beginning which are not data.
+  header_row_count: 1
+
+  keys:
+    - name
+  # Here we identify the columns of interest in the source file. Each numeric
+  # key is the 0-based index of the column. For each column, the key below
+  # (e.g., "start_date") is the field name assigned to the data on import, to
+  # be used in field mappings below. The value is a user-friendly string for
+  # display by the migration UI.
+  column_names:
+    # So, here we're saying that the first field (index 0) on each line will
+    # be stored in the start_date field in the Row object during migration, and
+    # that name can be used to map the value below. "Date of game" will appear
+    # in the UI to describe this field.
+    0:
+      name: Identifier
+    1:
+      vocabulary_machine_name: Vocabulary
+    2:
+      description: Description
+    3:
+      format: Format
+    4:
+      weight: Weight
+    5:
+      parent: Parent
+    6:
+      field_right_body: Right Body
+
+process:
+  tid:
+    plugin: migration
+    migration: custom_taxonomy_term
+    source: tid
+  vid:
+    plugin: migration
+    migration: custom_taxonomy_vocabulary
+    source: vid
+  name: name
+  description: description
+  format: format
+  weight: weight
+  parent:
+    -
+      plugin: skip_on_empty
+      source: parent
+    -
+      plugin: migration
+      migration: custom_taxonomy_term
+  changed: timestamp
+  field_right_body: field_right_body
+
+destination:
+  plugin: entity:taxonomy_term
+migration_dependencies:
+  required:
+    - custom_taxonomy_vocabulary

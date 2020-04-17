@@ -1,0 +1,12 @@
+<?php
+
+/**
+ * Implements hook_uninstall().
+ */
+function migrate_maria_uninstall() {
+  \Drupal::configFactory()->getEditable('migrate_plus.migration.upgrade_d7_node_service')->delete();
+  \Drupal::configFactory()->getEditable('migrate_plus.migration.maria_d7_taxonomy_term')->delete();
+  \Drupal::configFactory()->getEditable('migrate_plus.migration.upgrade_d7_taxonomy_vocabulary')->delete();
+  \Drupal::configFactory()->getEditable('migrate_plus.migration.upgrade_d7_url_alias')->delete();
+  \Drupal::configFactory()->getEditable('migrate_plus.migration.upgrade_d7_file')->delete();
+}

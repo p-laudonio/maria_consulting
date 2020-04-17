@@ -1,0 +1,8 @@
+name: migrate_maria_types
+type: module
+description: Migrate Maria Consulting basic types, fields, image styles and menus to D8
+core: 8.x
+package: Custom
+dependencies:
+  - migrate_plus
+  - migrate_drupal

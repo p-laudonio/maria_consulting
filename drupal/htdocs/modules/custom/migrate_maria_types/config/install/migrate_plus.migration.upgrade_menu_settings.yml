@@ -1,0 +1,22 @@
+uuid: 8ff4a1ef-5542-42fe-852c-e6771a7c5181
+langcode: en
+status: true
+dependencies: {  }
+id: upgrade_menu_settings
+migration_tags:
+  - 'Drupal 6'
+  - 'Drupal 7'
+migration_group: migrate_maria_types
+label: 'Menu UI configuration'
+source:
+  plugin: variable
+  variables:
+    - menu_override_parent_selector
+process:
+  override_parent_selector: menu_override_parent_selector
+destination:
+  plugin: config
+  config_name: menu_ui.settings
+migration_dependencies:
+  required: {  }
+  optional: {  }

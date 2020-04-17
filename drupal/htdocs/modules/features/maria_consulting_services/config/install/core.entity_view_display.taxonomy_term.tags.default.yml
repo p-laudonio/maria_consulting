@@ -1,0 +1,34 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.tags.field_meta_tags
+    - field.field.taxonomy_term.tags.field_right_body
+    - taxonomy.vocabulary.tags
+  module:
+    - metatag
+    - text
+id: taxonomy_term.tags.default
+targetEntityType: taxonomy_term
+bundle: tags
+mode: default
+content:
+  description:
+    label: hidden
+    type: text_default
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+  field_meta_tags:
+    weight: 2
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_empty_formatter
+  field_right_body:
+    weight: 1
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+hidden: {  }

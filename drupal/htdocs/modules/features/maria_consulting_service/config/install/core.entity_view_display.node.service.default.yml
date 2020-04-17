@@ -1,0 +1,56 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.service.body
+    - field.field.node.service.field_image
+    - field.field.node.service.field_meta_tags
+    - field.field.node.service.field_tags
+    - field.field.node.service.field_teaser
+    - node.type.service
+  module:
+    - image
+    - metatag
+    - text
+    - user
+id: node.service.default
+targetEntityType: node
+bundle: service
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+  field_image:
+    weight: 104
+    label: above
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+  field_meta_tags:
+    weight: 105
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_empty_formatter
+  field_tags:
+    weight: 102
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  field_teaser:
+    weight: 103
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+  links:
+    weight: 100
+hidden: {  }
