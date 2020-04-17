@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  traefik:
+    image: traefik:v2.0
+    command: --api.insecure=true --providers.docker
+    networks:
+      - maria_consulting
+    ports:
+      - '80:80'
+      - '8002:80'
+      - '8080:8080'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  maria_consulting:
+    external: 
+      name: maria_consulting-dir_default
