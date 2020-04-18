@@ -37,8 +37,10 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page {
     kint($plugins);
     */
 
+    $variables['page_name'] = 'page-generic';
     $is_front = \Drupal::service('path.matcher')->isFrontPage();
     if($is_front){
+      $variables['page_name'] = 'page-front';
       $my_tids = array(9, 22, 10, 20);
       $tags_array = MariaConsulting::getServicesDetails();
       $variables['more_services'] = MariaConsulting::getMoreServices($tags_array, array(), $my_tids);
@@ -46,6 +48,7 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page {
     }elseif ($node = \Drupal::routeMatch()->getParameter('node')) {
       $content_type = $node->bundle();
       $nid = $node->id();
+      $variables['page_name'] = 'page-' . $nid;
       if ($content_type == "service" && isset($node->field_tags)) {
         // Set the node ID if we're on a node page.
         $nid = isset($variables['node']) ? $variables['node']->id() : '';

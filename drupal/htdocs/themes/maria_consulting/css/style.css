@@ -34,6 +34,9 @@ h1.page-header, h2 {
     margin: 53px 0 37px 0;
     border-width: 0;
 }
+.page-support h1.page-header, .page-contacts h2 {
+    margin-top: 0;
+}
 aside { margin-top: 53px; }
 aside section:first-child h2:first-child, aside section:first-child h1:first-child { margin-top: 0; }
 h2 > span {
@@ -276,6 +279,13 @@ header .main-header {
 header .sub-header {
     padding: 0 0 0 0;
     margin-top: 59px;
+}
+header .border-bottom {
+    padding-top: 0;
+    padding-bottom: 35px;
+}
+header.header-page-front .border-bottom {
+    border-bottom: none;
 }
 
 /*brand*/
@@ -1038,6 +1048,9 @@ footer .col-md-12 > span > span a:hover {
 }
 .social-icons li a.icon-4 {
     background: url(../img/icon-4.png) 0 0 no-repeat;
+}
+.social-icons li a.icon-linked-in {
+    background: url(../img/icon-linked-in.jpg) 0 0 no-repeat;
 }
 .social-icons li a:hover {
     background-position: 0 bottom;
