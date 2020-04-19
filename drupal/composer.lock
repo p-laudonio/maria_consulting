@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3875b32d91ad841eae93d7cc12ead27c",
+    "content-hash": "89347a4928572450e5177cf7f98f0aa6",
     "packages": [
         {
             "name": "alchemy/zippy",
@@ -2579,6 +2579,64 @@
             ],
             "description": "Drupal Console Extend Plugin",
             "time": "2019-11-07T20:15:27+00:00"
+        },
+        {
+            "name": "drupal/cookieconsent",
+            "version": "1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/cookieconsent.git",
+                "reference": "8.x-1.4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/cookieconsent-8.x-1.4.zip",
+                "reference": "8.x-1.4",
+                "shasum": "4b4d551d80fe133ab5df3d75f1e34f85c58dbed2"
+            },
+            "require": {
+                "drupal/core": "~8.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-1.4",
+                    "datestamp": "1530539621",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Hans van Wezenbeek (Nitebreed)",
+                    "homepage": "https://www.drupal.org/u/nitebreed",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "pjotr",
+                    "homepage": "https://www.drupal.org/user/3487709"
+                }
+            ],
+            "description": "CookieConsent uses the Cookie Consent javascript library for alerting users about the use of cookies on your website",
+            "homepage": "https://www.drupal.org/project/cookieconsent",
+            "keywords": [
+                "Cookie",
+                "CookieConsent",
+                "Drupal"
+            ],
+            "support": {
+                "source": "http://cgit.drupalcode.org/cookieconsent",
+                "issues": "http://drupal.org/project/issues/cookieconsent"
+            }
         },
         {
             "name": "drupal/core",
