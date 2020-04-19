@@ -1,0 +1,34 @@
+<?php
+
+/**
+ * @file
+ * Contains custom_migrate.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_help().
+ */
+function maria_custom_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the custom_migrate module.
+    case 'help.page.maria_custom':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Custom Code For Maria Consulting') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function maria_custom_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  if ($form_id == 'webform_submission_contact_node_29_add_form' && isset($form['captcha'])) {
+    $form['captcha']['#weight'] = -100;
+  }
+}
