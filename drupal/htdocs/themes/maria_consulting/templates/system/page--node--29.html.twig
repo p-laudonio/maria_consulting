@@ -62,6 +62,22 @@
 {# Main #}
 {% block main %}
   <div role="main" class="main-container {{ container }} js-quickedit-main-content page-contacts">
+
+      <div class="row">
+          {# Highlighted #}
+          {% if page.highlighted %}
+              {% block highlighted %}
+                  <div class="highlighted">{{ page.highlighted }}</div>
+              {% endblock %}
+          {% endif %}
+          {# Help #}
+          {% if page.help %}
+              {% block help %}
+                  {{ page.help }}
+              {% endblock %}
+          {% endif %}
+      </div>
+
     <div class="row">
 
       {# Header #}
@@ -85,13 +101,6 @@
       %}
       <section{{ content_attributes.addClass(content_classes) }}>
 
-          {# Highlighted #}
-          {% if page.highlighted %}
-              {% block highlighted %}
-                  <div class="highlighted">{{ page.highlighted }}</div>
-              {% endblock %}
-          {% endif %}
-
           {# Breadcrumbs #}
           {% if breadcrumb %}
               {% block breadcrumb %}
@@ -103,13 +112,6 @@
           {% if action_links %}
               {% block action_links %}
                   <ul class="action-links">{{ action_links }}</ul>
-              {% endblock %}
-          {% endif %}
-
-          {# Help #}
-          {% if page.help %}
-              {% block help %}
-                  {{ page.help }}
               {% endblock %}
           {% endif %}
 

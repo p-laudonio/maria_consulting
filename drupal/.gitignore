@@ -10,6 +10,7 @@
 # Ignore sensitive information
 /htdocs/sites/*/settings.php
 /htdocs/sites/*/settings.local.php
+/htdocs/sites/default/prod/settings.php
 /htdocs/sites/default/services.yml
 
 # Ignore Drupal's file directory

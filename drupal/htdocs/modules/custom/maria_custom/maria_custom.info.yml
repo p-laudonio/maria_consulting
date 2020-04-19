@@ -1,0 +1,5 @@
+name: maria_custom
+type: module
+description: Maria Consulting Custom Module, Form alters, Plugins, etc..
+core: 8.x
+package: Maria_Consulting

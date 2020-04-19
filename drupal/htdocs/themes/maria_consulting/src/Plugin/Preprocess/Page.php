@@ -87,6 +87,7 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page {
       if ($content_type == "webform" && isset($node->body)) {
         $webform = $node->get('webform');
         $iterator = $webform->getIterator();
+        /** @var \Drupal\webform\Plugin\Field\FieldType\WebformEntityReferenceItem $element */
         $element = $iterator->offsetGet(0);
         $raw_html = render($element->view());
         $variables['node_webform'] = Markup::create($raw_html);
