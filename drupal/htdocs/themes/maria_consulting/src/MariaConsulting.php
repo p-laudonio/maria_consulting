@@ -343,10 +343,12 @@ class MariaConsulting
     $count = count($more_services);
     $index = 0;
     for($i = $count; $i < 5; $i++){
-      $element = $special_services[$index];
-      $element['key'] = $i + 1;
-      $more_services[$i] = $element;
-      $index++;
+      if (isset($special_services[$index])) {
+        $element = $special_services[$index];
+        $element['key'] = $i + 1;
+        $more_services[$i] = $element;
+        $index++;
+      }
     }
 
     return $more_services;
