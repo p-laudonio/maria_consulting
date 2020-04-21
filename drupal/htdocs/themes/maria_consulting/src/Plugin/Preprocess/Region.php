@@ -17,22 +17,27 @@ use Drupal\bootstrap\Utility\Variables;
  *
  * @BootstrapPreprocess("region")
  */
-class Region extends \Drupal\bootstrap\Plugin\Preprocess\Region  {
+class Region extends \Drupal\bootstrap\Plugin\Preprocess\Region
+{
 
   /**
    * {@inheritdoc}
    */
-  public function preprocessVariables(Variables $variables) {
+  public function preprocessVariables(Variables $variables)
+  {
     $region = $variables['elements']['#region'];
-    if($region == "sidebar_second"){
+    if ($region == "sidebar_second") {
       $term = \Drupal::routeMatch()->getParameter('taxonomy_term');
-      if($term){
+      if ($term) {
         $rightBody = $term->get('field_right_body');
         $iterator = $rightBody->getIterator();
-        $element = $iterator->offsetGet(0);
-        if($element){
-          $raw_html = render($element->view());
-          $variables['elements']['#children'] = \Drupal\Core\Render\Markup::create($raw_html . $variables['content']->__toString());
+        if ($iterator->offsetExists(0)) {
+          $element = $iterator->offsetGet(0);
+          if ($element) {
+            $element_view = $element->view();
+            $raw_html = render($element_view);
+            $variables['elements']['#children'] = \Drupal\Core\Render\Markup::create($raw_html . $variables['content']->__toString());
+          }
         }
       }
     }

@@ -23,7 +23,8 @@ use Drupal\maria_consulting\MariaConsulting;
  *
  * @BootstrapPreprocess("page")
  */
-class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page {
+class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page
+{
 
   /**
    * {@inheritdoc}
@@ -39,13 +40,13 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page {
 
     $variables['page_name'] = 'page-generic';
     $is_front = \Drupal::service('path.matcher')->isFrontPage();
-    if($is_front){
+    if ($is_front) {
       $variables['page_name'] = 'page-front';
       $my_tids = array(9, 22, 10, 20);
       $tags_array = MariaConsulting::getServicesDetails();
       $variables['more_services'] = MariaConsulting::getMoreServices($tags_array, array(), $my_tids);
 
-    }elseif ($node = \Drupal::routeMatch()->getParameter('node')) {
+    } elseif ($node = \Drupal::routeMatch()->getParameter('node')) {
       $content_type = $node->bundle();
       $nid = $node->id();
       $variables['page_name'] = 'page-' . $nid;
@@ -67,19 +68,19 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page {
         */
 
         $my_tids = array();
-        foreach($my_tags_list as $term){
+        foreach ($my_tags_list as $term) {
           $my_tids[] = $term['target_id'];
         }
 
-        if(!in_array($nid, array(12, 33))){
+        if (!in_array($nid, array(12, 33))) {
           $tags_array = MariaConsulting::getServicesDetails();
           $special_services = MariaConsulting::getSpecialServices();
           $variables['more_services'] = MariaConsulting::getMoreServices($tags_array, $special_services, $my_tids);
-        }else{
+        } else {
           $variables['more_services'] = false;
         }
 
-      }elseif (in_array($content_type, array("page", 'work_experience'))){
+      } elseif (in_array($content_type, array("page", 'work_experience'))) {
         $variables['page']['sidebar_second']['#region'] = 'sidebar_second_' . $content_type;
       }
 
@@ -87,10 +88,13 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page {
       if ($content_type == "webform" && isset($node->body)) {
         $webform = $node->get('webform');
         $iterator = $webform->getIterator();
-        /** @var \Drupal\webform\Plugin\Field\FieldType\WebformEntityReferenceItem $element */
-        $element = $iterator->offsetGet(0);
-        $raw_html = render($element->view());
-        $variables['node_webform'] = Markup::create($raw_html);
+        if ($iterator->offsetExists(0)) {
+          /** @var \Drupal\webform\Plugin\Field\FieldType\WebformEntityReferenceItem $element */
+          $element = $iterator->offsetGet(0);
+          $element_view = $element->view();
+          $raw_html = render($element_view);
+          $variables['node_webform'] = Markup::create($raw_html);
+        }
       }
     }
 
@@ -104,14 +108,16 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page {
   /**
    * {@inheritdoc}
    */
-  public function preprocessVariables(Variables $variables) {
+  public function preprocessVariables(Variables $variables)
+  {
     parent::preprocessVariables($variables);
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function preprocessElement(Element $element, Variables $variables) {
+  protected function preprocessElement(Element $element, Variables $variables)
+  {
     // This method is only ever invoked if either $variables['element'] or
     // $variables['elements'] exists. These keys are usually only found in forms
     // or render arrays when there is a #type being used. This introduces the

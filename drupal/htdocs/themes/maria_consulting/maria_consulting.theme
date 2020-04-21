@@ -6,15 +6,19 @@
  * Place your custom PHP code in this file.
  */
 
-function maria_consulting_preprocess_views_view_field(&$variables) {
-  if($variables['view']->current_display == "home_slider_page"){
-    $captions = array();
+function maria_consulting_preprocess_views_view_field(&$variables)
+{
+  if ($variables['view']->current_display == "home_slider_page") {
+    $caption = '';
     $node = $variables["row"]->_entity;
-    if($node instanceof Drupal\node\Entity\Node){
+    if ($node instanceof Drupal\node\Entity\Node) {
       $body = $node->get('body');
       $body_it = $body->getIterator();
-      $element = $body_it->offsetGet($variables['view']->row_index);
-      $caption = render($element->view());
+      if ($body_it->offsetExists($variables['view']->row_index)) {
+        $element = $body_it->offsetGet($variables['view']->row_index);
+        $element_view = $element->view();
+        $caption = render($element_view);
+      }
     }
     $variables['output'] = Drupal\Core\Render\Markup::create($caption . $variables['field']->advancedRender($variables['row'])->__toString());
   }
