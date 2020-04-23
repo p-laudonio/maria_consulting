@@ -57,22 +57,13 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page
         $field_tags = $node->get('field_tags');
         $my_tags_list = $field_tags->getValue();
 
-        /*
-        $iterator = $field_tags->getIterator();
-        $raw_html = '<div class="field--name-field-right-body"><ul class="list">';
-        foreach ($iterator as $element) {
-          $raw_html .= '<li>' . render($element->view()) . '</li>';
-        }
-        $raw_html .= '</ul></div>';
-        $variables['page_service_tags'] = Markup::create($raw_html);
-        */
-
         $my_tids = array();
         foreach ($my_tags_list as $term) {
           $my_tids[] = $term['target_id'];
         }
 
-        if (!in_array($nid, array(12, 33))) {
+        $special_service_nids = MariaConsulting::getSpecialServicesNIDs();
+        if (!in_array($nid, $special_service_nids)) {
           $tags_array = MariaConsulting::getServicesDetails();
           $special_services = MariaConsulting::getSpecialServices();
           $variables['more_services'] = MariaConsulting::getMoreServices($tags_array, $special_services, $my_tids);
