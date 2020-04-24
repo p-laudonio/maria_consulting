@@ -10,6 +10,7 @@ use Drupal\bootstrap\Annotation\BootstrapPreprocess;
 use Drupal\bootstrap\Utility\Variables;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
+use Drupal\maria_consulting\MariaConsulting;
 
 /**
  * Pre-processes variables for the "breadcrumb" theme hook.
@@ -30,8 +31,9 @@ class Breadcrumb extends \Drupal\bootstrap\Plugin\Preprocess\Breadcrumb
     if ($node = \Drupal::routeMatch()->getParameter('node')) {
       $content_type = $node->bundle();
       if ($content_type == "service" && isset($node->field_tags)) {
+        $special_service_nids = MariaConsulting::getSpecialServicesNIDs();
         // Set the node ID if we're on a node page.
-        $wide_template = in_array($node->id(), array(12, 33));
+        $wide_template = in_array($node->id(), $special_service_nids);
         if ($wide_template) {
           $field_tags = $node->get('field_tags');
           $iterator = $field_tags->getIterator();

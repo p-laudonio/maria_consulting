@@ -317,8 +317,32 @@ class MariaConsulting
         'href' => 'responsive-design',
         'description' => 'We are specialised in building custom Drupal Bootstrap Responsive Sub Themes: we use open-source HTML / CSS framework to build responsive website.',
       ),
+      2 => array(
+        'nid' => 18,
+        'key' => 2,
+        'image' => 'install-drupal.jpg',
+        'caption' => 'Install Drupal 8',
+        'href' => 'installing-drupal',
+        'description' => 'Drupal 8 is an open source CMC, see how it is easy to set up on my Guide on how to install Drupal 8.',
+      ),
     );
     return $special_services;
+  }
+
+  /**
+   * Return the list of Node ID of all spacial services.
+   *
+   * @return array $nids
+   */
+  public static function getSpecialServicesNIDs() {
+    $special_services = self::getSpecialServices();
+    $nids = [];
+    foreach ($special_services as $special_service) {
+      if (!empty($special_service['nid'])) {
+        $nids[] = $special_service['nid'];
+      }
+    }
+    return $nids;
   }
 
   /**

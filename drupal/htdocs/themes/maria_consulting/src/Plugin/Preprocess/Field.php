@@ -44,36 +44,19 @@ class Field extends PreprocessBase implements PreprocessInterface
       // For node services concatenates the body[$delta] with field_image[[$delta]]:
     } elseif ($element['#field_name'] == 'body' && $element['#bundle'] == "service") {
       $node = $element['#object'];
-      $nid = $node->id();
       $field_image = $node->get('field_image');
       $image_iterator = $field_image->getIterator();
-      $iterator = $element['#items']->getIterator();
       $total = $element['#items']->count();
       for ($delta = 0; $delta < $total; $delta++) {
-        $element = $iterator->offsetExists($delta) ? $iterator->offsetGet($delta) : FALSE;
-        $element_image = $image_iterator->offsetExists($delta) ? $image_iterator->offsetGet($delta) : FALSE;
-        if ($element_image && $element) {
-          if (in_array($nid, array(7, 8, 9, 10))) {
-            $col1 = 2;
-            $col2 = 10;
-          } else {
-            $col1 = 5;
-            $col2 = 7;
-          }
+        if ($image_iterator->offsetExists($delta)) {
+          $element_image = $image_iterator->offsetGet($delta);
           $element_image_view = $element_image->view();
-          $element_view = $element->view();
-          $raw_html = '<div class="block-6 views-row">
-                             <div class="description col-sm-' . $col1 . '">
-                             <figure class="img-polaroid">
-                             ' . render($element_image_view) . '
-                             </figure>
-                             </div>
-                             <div class="field-content related-services list col-sm-' . $col2 . '">
-                             ' . render($element_view) . '
-                             </div>
-                             </div>';
+          $raw_html = render($element_image_view);
           $markup = \Drupal\Core\Render\Markup::create($raw_html);
-          $variables['items'][$delta]['content'] = $markup;
+          $variables['items'][$delta]['service_body_image'] = $markup;
+        }
+        else {
+          $variables['items'][$delta]['service_body_image'] = FALSE;
         }
       }
     }
