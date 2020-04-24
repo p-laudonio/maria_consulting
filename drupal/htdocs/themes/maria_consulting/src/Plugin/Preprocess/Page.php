@@ -42,9 +42,10 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page
     $is_front = \Drupal::service('path.matcher')->isFrontPage();
     if ($is_front) {
       $variables['page_name'] = 'page-front';
-      $my_tids = array(9, 22, 10, 20);
-      $tags_array = MariaConsulting::getServicesDetails();
-      $variables['more_services'] = MariaConsulting::getMoreServices($tags_array, array(), $my_tids);
+      $my_tids = array(9, 22, 20);
+      $tags_array = MariaConsulting::getServicesDetailsByTid($my_tids);
+      $special_services = MariaConsulting::getSpecialServicesByNIDs([14], 2);
+      $variables['more_services'] = MariaConsulting::getMoreServices($tags_array, $special_services);
 
     } elseif ($node = \Drupal::routeMatch()->getParameter('node')) {
       $content_type = $node->bundle();
@@ -62,13 +63,20 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page
           $my_tids[] = $term['target_id'];
         }
 
+        // In special Service we remove the first link because it is already inside the BreadCrumb.
         $special_service_nids = MariaConsulting::getSpecialServicesNIDs();
-        if (!in_array($nid, $special_service_nids)) {
-          $tags_array = MariaConsulting::getServicesDetails();
-          $special_services = MariaConsulting::getSpecialServices();
-          $variables['more_services'] = MariaConsulting::getMoreServices($tags_array, $special_services, $my_tids);
+        $skip_first = in_array($node->id(), $special_service_nids);
+        if ($skip_first) {
+          // Deleting first array item
+          array_shift($my_tids);
+        }
+        $tags_array = MariaConsulting::getServicesDetailsByTid($my_tids);
+        if (count($tags_array) < 4) {
+          $max = 4 - count($tags_array);
+          $special_services = MariaConsulting::getSpecialServices($nid, $max);
+          $variables['more_services'] = MariaConsulting::getMoreServices($tags_array, $special_services);
         } else {
-          $variables['more_services'] = false;
+          $variables['more_services'] = $tags_array;
         }
 
       } elseif (in_array($content_type, array("page", 'work_experience'))) {
