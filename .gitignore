@@ -2,3 +2,5 @@
 .docker-sync/
 databases
 drupal/vendor/
+freepick-licenses/
+google/
