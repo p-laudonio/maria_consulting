@@ -38,6 +38,8 @@ h1.page-header, h2 {
     margin-top: 0;
 }
 aside { margin-top: 53px; }
+.page-service-taxonomy.has-header-image aside { margin-top: 0; }
+
 aside section:first-child h2:first-child, aside section:first-child h1:first-child { margin-top: 0; }
 h2 > span {
     color: #a2d1e0;
@@ -287,6 +289,9 @@ header .border-bottom {
 header.header-page-front .border-bottom {
     border-bottom: none;
 }
+.page-service-taxonomy .border-bottom {
+    margin-bottom: 30px;
+}
 
 /*brand*/
 header h1.brand {
@@ -519,10 +524,15 @@ header .navbar-default{
     border-width: 0;
 }
 
+.flexslider ul.slides {
+    padding-left: 0;
+}
+
 .flexslider ul.slides li {
     position: relative;
 }
 
+.flexslider ul.slides li .field-content h1,
 .flexslider ul.slides li .field-content p {
     position: absolute;
     right: 0;
@@ -532,6 +542,7 @@ header .navbar-default{
     line-height: 1em;
 }
 
+.flexslider ul.slides li .field-content h1,
 .flexslider ul.slides li .field-content p strong {
     font-size: 100px;
     line-height: 1em;
@@ -545,6 +556,46 @@ header .navbar-default{
     font-weight: bold;
 }
 
+.page-service-taxonomy .flexslider ul.slides li .field-content h1 {
+    font-size: 50px;
+}
+.taxonomy-term-1 .flexslider ul.slides li .field-content h1,
+.taxonomy-term-5 .flexslider ul.slides li .field-content h1,
+.taxonomy-term-6 .flexslider ul.slides li .field-content h1,
+.taxonomy-term-17 .flexslider ul.slides li .field-content h1,
+.taxonomy-term-23 .flexslider ul.slides li .field-content h1,
+.taxonomy-term-24 .flexslider ul.slides li .field-content h1 {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: auto;
+}
+.taxonomy-term-7 .flexslider ul.slides li .field-content h1,
+.taxonomy-term-9 .flexslider ul.slides li .field-content h1,
+.taxonomy-term-11 .flexslider ul.slides li .field-content h1,
+.taxonomy-term-13 .flexslider ul.slides li .field-content h1,
+.taxonomy-term-16 .flexslider ul.slides li .field-content h1,
+.taxonomy-term-18 .flexslider ul.slides li .field-content h1 {
+    top: auto;
+    bottom: 0;
+}
+.taxonomy-term-8 .flexslider ul.slides li .field-content h1,
+.taxonomy-term-12 .flexslider ul.slides li .field-content h1,
+.taxonomy-term-22 .flexslider ul.slides li .field-content h1,
+.taxonomy-term-27 .flexslider ul.slides li .field-content h1 {
+    top: 0;
+    left: 0;
+    right: auto;
+    margin-top: 0;
+}
+.taxonomy-term-4 .flexslider ul.slides li .field-content h1,
+.taxonomy-term-10 .flexslider ul.slides li .field-content h1,
+.taxonomy-term-29 .flexslider ul.slides li .field-content h1 {
+    top: 0;
+    margin-top: 0;
+}
+
+.flexslider ul.slides li .field-content h1 span, .flexslider ul.slides li h1 a,
 .flexslider ul.slides li .field-content p span, .flexslider ul.slides li p a {
     font-size: 50px;
     line-height: 1em;
@@ -558,6 +609,7 @@ header .navbar-default{
     letter-spacing: -2px;
 }
 
+.flexslider ul.slides li h1 a:hover,
 .flexslider ul.slides li p a:hover {
     text-decoration: none;
 }
@@ -1144,6 +1196,7 @@ footer .col-md-12 > span > span a:hover {
     .flexslider ul.slides li {
         height: 456px;
     }
+    .flexslider ul.slides li .field-content h1,
     .flexslider ul.slides li .field-content p {
         top: 129px;
     }
@@ -1201,13 +1254,16 @@ footer .col-md-12 > span > span a:hover {
         display: inline-block;
         float: left;
     }
+    .flexslider ul.slides li .field-content h1,
     .flexslider ul.slides li .field-content p {
         top: 50px; font-size: 30px;
     }
+    .flexslider ul.slides li .field-content h1,
     .flexslider ul.slides li .field-content p strong {
         font-size: 50px;
         letter-spacing: -3px;
     }
+    .flexslider ul.slides li .field-content h1 span,
     .flexslider ul.slides li .field-content p span {
         font-size: 30px;
     }
@@ -1393,6 +1449,12 @@ footer .col-md-12 > span > span a:hover {
 @media (max-width: 625px) {
     .flexslider ul.slides li .field-content p {
         display: none !important;
+    }
+    .flexslider ul.slides li .field-content h1 {
+        display: block;
+        position: relative;
+        top: 10px;
+        margin-top: 0;
     }
     .thumbnails {
         margin-left: 0;

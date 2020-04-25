@@ -11,6 +11,7 @@ use Drupal\bootstrap\Utility\Element;
 use Drupal\bootstrap\Utility\Variables;
 use Drupal\Core\Render\Markup;
 use Drupal\maria_consulting\MariaConsulting;
+use Drupal\taxonomy\Entity\Term;
 
 // use Drupal\bootstrap\Bootstrap;
 // use Drupal\bootstrap\Plugin\PreprocessManager;
@@ -94,6 +95,31 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page
           $raw_html = render($element_view);
           $variables['node_webform'] = Markup::create($raw_html);
         }
+      }
+    }
+    /** @var Term $taxonomy_term */
+    elseif ($taxonomy_term = \Drupal::routeMatch()->getParameter('taxonomy_term')) {
+      $vocabularyId = $taxonomy_term->getVocabularyId();
+      if ($vocabularyId == 'tags') {
+        $variables['page_name'] = 'page-service-taxonomy';
+        $variables['page']['service_page_title'] = Markup::create($variables['page']['#title']);
+        $variables['page']['service_image'] = FALSE;
+
+        if ($taxonomy_term->hasField('field_service_image')) {
+          $field_image = $taxonomy_term->get('field_service_image');
+          if (!$field_image->isEmpty()) {
+            $image_iterator = $field_image->getIterator();
+            if ($image_iterator->offsetExists(0)) {
+              $element_image = $image_iterator->offsetGet(0);
+              $element_image_view = $element_image->view();
+              $raw_html = render($element_image_view);
+              $markup = \Drupal\Core\Render\Markup::create($raw_html);
+              $variables['page']['service_image'] = $markup;
+              $variables['page_name'] = 'page-service-taxonomy has-header-image taxonomy-term-' . $taxonomy_term->id();
+            }
+          }
+        }
+
       }
     }
 
