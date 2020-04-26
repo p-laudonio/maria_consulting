@@ -88,6 +88,11 @@
         "patchLevel": {
             "drupal/core": "-p2"
         },
+        "patches": {
+            "drupal/core": {
+                "ImageStyle::buildUrl() should generate root-relative URLs instead of absolute (https://www.drupal.org/project/drupal/issues/2858885)": "https://www.drupal.org/files/issues/2020-01-03/2858885_buidUrl-relative-urls-22.patch"
+            }
+        },
         "drupal-scaffold": {
             "locations": {
                 "web-root": "htdocs/"
