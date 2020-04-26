@@ -1,0 +1,53 @@
+<?php
+
+use Drupal\Core\Entity\EntityStorageException;
+use Drupal\file\Entity\File;
+
+/**
+ * @file
+ * Install, update, and uninstall functions for Maria Custom.
+ *
+ * @ingroup maria_custom
+ */
+
+/**
+ * Updates file uri for services images to be inside the service folder.
+ */
+function maria_custom_update_8001() {
+  $query = \Drupal::entityQuery('file');
+  $query->condition('uri', '%2020-04%', 'LIKE');
+  $entity_ids = $query->execute();
+  $tot = 0;
+  foreach ($entity_ids as $file_id) {
+    /** @var File $file */
+    $file = \Drupal\file\Entity\File::load($file_id);
+    if ($file) {
+      $uri = $file->getFileUri();
+      $new_uri  = str_replace('2020-04', 'service', $uri);
+      $file->setFileUri($new_uri);
+      try {
+        $file->save();
+        $tot++;
+        $message = t('URI updated from @uri to @new_uri',
+          array(
+            '@uri' => $uri,
+            '@new_uri' => $new_uri,
+          )
+        );
+        \Drupal::logger('maria_custom')->notice($message);
+      } catch (EntityStorageException $e) {
+        watchdog_exception('maria_custom', $e);
+      }
+    }
+  }
+
+  if ($tot > 0) {
+    $message = t('@tot URI(s) have been have been updated from public://2020-04/<file> to public://service/<file>',
+    array(
+      '@tot' => $tot,
+    )
+    );
+    \Drupal::logger('maria_custom')->notice($message);
+  }
+
+}

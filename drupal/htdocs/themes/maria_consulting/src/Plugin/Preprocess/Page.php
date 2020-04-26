@@ -11,6 +11,7 @@ use Drupal\bootstrap\Utility\Element;
 use Drupal\bootstrap\Utility\Variables;
 use Drupal\Core\Render\Markup;
 use Drupal\maria_consulting\MariaConsulting;
+use Drupal\taxonomy\Entity\Term;
 
 // use Drupal\bootstrap\Bootstrap;
 // use Drupal\bootstrap\Plugin\PreprocessManager;
@@ -42,9 +43,39 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page
     $is_front = \Drupal::service('path.matcher')->isFrontPage();
     if ($is_front) {
       $variables['page_name'] = 'page-front';
-      $my_tids = array(9, 22, 20);
-      $tags_array = MariaConsulting::getServicesDetailsByTid($my_tids);
-      $special_services = MariaConsulting::getSpecialServicesByNIDs([14], 2);
+      // Select the top 4 Promoted Taxonomy Terms.
+      $term_storage = \Drupal::entityTypeManager()
+        ->getStorage('taxonomy_term');
+      $query = $term_storage->getQuery();
+      $query->condition('field_term_promoted', true);
+      $query->sort('weight');
+      $promoted_tids = $query->execute();
+      if (!empty($promoted_tids)) {
+        $tags_array = MariaConsulting::getServicesDetailsByTid($promoted_tids);
+      }
+      else {
+        $tags_array = [];
+      }
+
+      // Select the top Promoted Node Services.
+      $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+      $query = $node_storage->getQuery();
+
+      $entity_type = [
+        'service'
+      ];
+
+      $promoted_nids = $query->condition('type', $entity_type, 'IN')
+        ->condition('promote', true)
+        ->execute();
+
+      if (!empty($promoted_nids)) {
+        $special_services = MariaConsulting::getSpecialServicesByNIDs($promoted_nids, 2);
+      }
+      else {
+        $special_services = [];
+      }
+
       $variables['more_services'] = MariaConsulting::getMoreServices($tags_array, $special_services);
 
     } elseif ($node = \Drupal::routeMatch()->getParameter('node')) {
@@ -73,7 +104,14 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page
         $tags_array = MariaConsulting::getServicesDetailsByTid($my_tids);
         if (count($tags_array) < 4) {
           $max = 4 - count($tags_array);
-          $special_services = MariaConsulting::getSpecialServices($nid, $max);
+          // Load the More Services Node IDs.
+          $field_more_services = $node->get('field_more_services');
+          $more_services_list = $field_more_services->getValue();
+          $my_nids = array();
+          foreach ($more_services_list as $term) {
+            $my_nids[] = $term['target_id'];
+          }
+          $special_services = MariaConsulting::getSpecialServices($nid, $max, $my_nids);
           $variables['more_services'] = MariaConsulting::getMoreServices($tags_array, $special_services);
         } else {
           $variables['more_services'] = $tags_array;
@@ -94,6 +132,31 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page
           $raw_html = render($element_view);
           $variables['node_webform'] = Markup::create($raw_html);
         }
+      }
+    }
+    /** @var Term $taxonomy_term */
+    elseif ($taxonomy_term = \Drupal::routeMatch()->getParameter('taxonomy_term')) {
+      $vocabularyId = $taxonomy_term->getVocabularyId();
+      if ($vocabularyId == 'tags') {
+        $variables['page_name'] = 'page-service-taxonomy';
+        $variables['page']['service_page_title'] = Markup::create($variables['page']['#title']);
+        $variables['page']['service_image'] = FALSE;
+
+        if ($taxonomy_term->hasField('field_service_image')) {
+          $field_image = $taxonomy_term->get('field_service_image');
+          if (!$field_image->isEmpty()) {
+            $image_iterator = $field_image->getIterator();
+            if ($image_iterator->offsetExists(0)) {
+              $element_image = $image_iterator->offsetGet(0);
+              $element_image_view = $element_image->view();
+              $raw_html = render($element_image_view);
+              $markup = \Drupal\Core\Render\Markup::create($raw_html);
+              $variables['page']['service_image'] = $markup;
+              $variables['page_name'] = 'page-service-taxonomy has-header-image taxonomy-term-' . $taxonomy_term->id();
+            }
+          }
+        }
+
       }
     }
 
