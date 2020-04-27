@@ -32,3 +32,18 @@ function maria_custom_form_alter(array &$form, FormStateInterface $form_state, $
     $form['captcha']['#weight'] = -100;
   }
 }
+
+/**
+ * Implements hook_theme().
+ */
+function maria_custom_theme($existing, $type, $theme, $path) {
+  return [
+    'maria_custom_service_block' => [
+      'path' => drupal_get_path('module', 'maria_custom') . '/templates',
+      'variables' => [
+        'more_services' => [],
+      ],
+      'template' => 'maria-custom-service-block'
+    ],
+  ];
+}

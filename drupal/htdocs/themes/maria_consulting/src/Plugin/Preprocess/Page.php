@@ -6,15 +6,10 @@
 
 namespace Drupal\maria_consulting\Plugin\Preprocess;
 
-use Drupal\bootstrap\Annotation\BootstrapPreprocess;
 use Drupal\bootstrap\Utility\Element;
 use Drupal\bootstrap\Utility\Variables;
 use Drupal\Core\Render\Markup;
-use Drupal\maria_consulting\MariaConsulting;
 use Drupal\taxonomy\Entity\Term;
-
-// use Drupal\bootstrap\Bootstrap;
-// use Drupal\bootstrap\Plugin\PreprocessManager;
 
 /**
  * Pre-processes variables for the "page" theme hook.
@@ -32,92 +27,15 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page
    */
   public function preprocess(array &$variables, $hook, array $info)
   {
-    // Discover all the theme's preprocess plugins:
-    /*
-    $preprocess_manager = new PreprocessManager(Bootstrap::getTheme());
-    $plugins = $preprocess_manager->getDefinitions();
-    kint($plugins);
-    */
-
     $variables['page_name'] = 'page-generic';
     $is_front = \Drupal::service('path.matcher')->isFrontPage();
     if ($is_front) {
       $variables['page_name'] = 'page-front';
-      // Select the top 4 Promoted Taxonomy Terms.
-      $term_storage = \Drupal::entityTypeManager()
-        ->getStorage('taxonomy_term');
-      $query = $term_storage->getQuery();
-      $query->condition('field_term_promoted', true);
-      $query->sort('weight');
-      $promoted_tids = $query->execute();
-      if (!empty($promoted_tids)) {
-        $tags_array = MariaConsulting::getServicesDetailsByTid($promoted_tids);
-      }
-      else {
-        $tags_array = [];
-      }
-
-      // Select the top Promoted Node Services.
-      $node_storage = \Drupal::entityTypeManager()->getStorage('node');
-      $query = $node_storage->getQuery();
-
-      $entity_type = [
-        'service'
-      ];
-
-      $promoted_nids = $query->condition('type', $entity_type, 'IN')
-        ->condition('promote', true)
-        ->execute();
-
-      if (!empty($promoted_nids)) {
-        $special_services = MariaConsulting::getSpecialServicesByNIDs($promoted_nids, 2);
-      }
-      else {
-        $special_services = [];
-      }
-
-      $variables['more_services'] = MariaConsulting::getMoreServices($tags_array, $special_services);
-
     } elseif ($node = \Drupal::routeMatch()->getParameter('node')) {
       $content_type = $node->bundle();
       $nid = $node->id();
       $variables['page_name'] = 'page-' . $nid;
-      if ($content_type == "service" && isset($node->field_tags)) {
-        // Set the node ID if we're on a node page.
-        $nid = isset($variables['node']) ? $variables['node']->id() : '';
-
-        $field_tags = $node->get('field_tags');
-        $my_tags_list = $field_tags->getValue();
-
-        $my_tids = array();
-        foreach ($my_tags_list as $term) {
-          $my_tids[] = $term['target_id'];
-        }
-
-        // In special Service we remove the first link because it is already inside the BreadCrumb.
-        $special_service_nids = MariaConsulting::getSpecialServicesNIDs();
-        $skip_first = in_array($node->id(), $special_service_nids);
-        if ($skip_first) {
-          // Deleting first array item
-          array_shift($my_tids);
-        }
-        $tags_array = MariaConsulting::getServicesDetailsByTid($my_tids);
-        if (count($tags_array) < 4) {
-          $max = 4 - count($tags_array);
-          // Load the More Services Node IDs.
-          $field_more_services = $node->get('field_more_services');
-          $more_services_list = $field_more_services->getValue();
-          $my_nids = array();
-          foreach ($more_services_list as $term) {
-            $my_nids[] = $term['target_id'];
-          }
-          $special_services = MariaConsulting::getSpecialServices($nid, $max, $my_nids);
-          $variables['more_services'] = MariaConsulting::getMoreServices($tags_array, $special_services);
-        } else {
-          $variables['more_services'] = $tags_array;
-        }
-
-      } elseif (in_array($content_type, array("page", 'work_experience'))) {
+      if (in_array($content_type, array("page", 'work_experience'))) {
         $variables['page']['sidebar_second']['#region'] = 'sidebar_second_' . $content_type;
       }
 
