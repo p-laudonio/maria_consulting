@@ -1,0 +1,434 @@
+<?php
+
+namespace Drupal\maria_custom;
+
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Datetime\DateFormatter;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\user\UserData;
+use Drupal\Core\Url;
+use Drupal\file\Entity\File;
+use Drupal\image\Entity\ImageStyle;
+
+class MariaCustomService
+{
+
+  /**
+   * Entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManager
+   */
+  protected $entityTypeManager;
+
+  /**
+   * Entity field manager.
+   *
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
+   */
+  protected $entityFieldManager;
+
+  /**
+   * The Database Connection.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $database;
+
+  /**
+   * The config factory service.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * Logger service.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
+   */
+  protected $logger;
+
+  /**
+   * Date Formatter.
+   *
+   * @var \Drupal\Core\Datetime\DateFormatter
+   */
+  protected $dateFormatter;
+
+  /**
+   * The Messenger service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messengerService;
+
+  /**
+   * Session.
+   *
+   * @var \Symfony\Component\HttpFoundation\Session\Session
+   */
+  protected $usersSession;
+
+  /**
+   * User Data.
+   *
+   * @var \Drupal\user\UserData
+   */
+  protected $userData;
+
+  /**
+   * The current user account.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
+   * Node Storage manager.
+   *
+   * @var EntityStorageInterface
+   */
+  protected $nodeStorage;
+
+  /**
+   * Term Storage manager.
+   *
+   * @var EntityStorageInterface
+   */
+  protected $termStorage;
+
+  /**
+   * File Storage manager.
+   *
+   * @var EntityStorageInterface
+   */
+  protected $fileStorage;
+
+  /**
+   * Image Style Storage manager.
+   *
+   * @var EntityStorageInterface
+   */
+  protected $imageStyleStorage;
+
+  /**
+   * RiskRegisterService constructor.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   Entity type manager.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
+   *   Entity field manager service.
+   * @param \Drupal\Core\Database\Connection $db_connection
+   *   The database connection.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory service.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger
+   *   The logger service.
+   * @param \Drupal\Core\Datetime\DateFormatter $date_formatter
+   *   The date formatter service.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger service.
+   * @param \Symfony\Component\HttpFoundation\Session\Session $session
+   *   The users session.
+   * @param \Drupal\user\UserData $user_data
+   *   User Data service.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The current user account.
+   */
+  public function __construct(
+    EntityTypeManagerInterface $entity_type_manager,
+    EntityFieldManagerInterface $entity_field_manager,
+    Connection $db_connection,
+    ConfigFactoryInterface $config_factory,
+    LoggerChannelFactoryInterface $logger,
+    DateFormatter $date_formatter,
+    MessengerInterface $messenger,
+    Session $session,
+    UserData $user_data,
+    AccountInterface $account)
+  {
+    $this->entityTypeManager = $entity_type_manager;
+    $this->entityFieldManager = $entity_field_manager;
+    $this->database = $db_connection;
+    $this->configFactory = $config_factory;
+    $this->logger = $logger;
+    $this->dateFormatter = $date_formatter;
+    $this->messengerService = $messenger;
+    $this->usersSession = $session;
+    $this->userData = $user_data;
+    $this->currentUser = $account;
+    try {
+      $this->nodeStorage = $this->entityTypeManager->getStorage('node');
+      $this->termStorage = $this->entityTypeManager->getStorage('taxonomy_term');
+      $this->fileStorage = $this->entityTypeManager->getStorage('file');
+      $this->imageStyleStorage = $this->entityTypeManager->getStorage('image_style');
+    } catch (PluginNotFoundException $exception) {
+      throw new NotFoundHttpException("Plugin Not Found Exception");
+    } catch (InvalidPluginDefinitionException $exception) {
+      throw new NotFoundHttpException("Invalid Plugin Definition Exception");
+    }
+  }
+
+  /**
+   * Get the Taxonomy Details by Taxonomy ID.
+   * @param int $tid
+   *
+   * @return array $term_item
+   *   An associative array containing tid/taxonomy details value pairs.
+   */
+  public function getServiceDetails($tid)
+  {
+    $term_item = [];
+    $term = $this->termStorage->load($tid);
+    if ($term instanceof ContentEntityInterface) {
+      $image_data = $this->getImageData($term, 'field_service_image');
+      $term_id = $term->id();
+      $term_url = $term->toUrl()->toString();
+
+      if ($term->hasField('field_term_teaser_title')) {
+        $caption = $term->field_term_teaser_title->value;
+      }
+      if (empty($caption)) {
+        $title_parts = explode(' ', $image_data['title']);
+        $caption = $title_parts[0];
+      }
+
+      if ($term->hasField('field_term_teaser')) {
+        $description = strip_tags($term->field_term_teaser->value);
+      }
+      if (empty($description)) {
+        $description = $this->getFirstWords(strip_tags($term->description->value), 137);
+      }
+
+      $term_item = array(
+        "tid" => $term_id,
+        'key' => 1,
+        "name" => $term->label(),
+        "image" => $image_data['url'],
+        'caption' => $caption,
+        'alt' => $image_data['alt'],
+        'title' => $image_data['title'],
+        'href' => $term_url,
+        'description' => $description,
+      );
+    }
+
+    return $term_item;
+  }
+
+  /**
+   * Return a Special Service Node by Node ID.
+   * @param  int $nid
+   *
+   * @return array $special_service
+   */
+  public function getSpecialService($nid)
+  {
+    $service_item = [];
+    $node = $this->nodeStorage->load($nid);
+    if ($node instanceof ContentEntityInterface) {
+      $image_data = $this->getImageData($node, 'field_image');
+
+      $nid = $node->id();
+      $node_url = $node->toUrl()->toString();
+
+      // Caption is the first word in the image title.
+      $title_parts = explode(' ', $image_data['title']);
+      $caption = $title_parts[0];
+
+      if ($node->hasField('field_image_text_preview')) {
+        $description = $node->field_image_text_preview->value;
+      }
+
+      if (empty($description) && $node->hasField('field_teaser')) {
+        $description = $this->getFirstWords(strip_tags($node->field_teaser->value), 137);
+      }
+
+      $service_item = array(
+        "nid" => $nid,
+        'key' => 1,
+        "name" => $node->label(),
+        "image" => $image_data['url'],
+        'caption' => $caption,
+        'alt' => $image_data['alt'],
+        'title' => $image_data['title'],
+        'href' => $node_url,
+        'description' => $description,
+      );
+    }
+
+    return $service_item;
+  }
+
+  /**
+   * Return the data from a field Image.
+   * @param ContentEntityInterface $contentEntity
+   * @param string $field_name
+   *
+   * @return array $image_data
+   */
+  public function getImageData(ContentEntityInterface $contentEntity, $field_name)
+  {
+    $image_data = [
+      'url' => '/themes/maria_consulting/img/image-blank.png',
+      'alt' => '',
+      'title' => '',
+    ];
+
+    $field_image = FALSE;
+    if ($contentEntity->hasField($field_name)) {
+      /** @var \Drupal\field\Entity\FieldConfig $def */
+      $def = $contentEntity->getFieldDefinition($field_name);
+      if ($def->getType() == 'image') {
+        /** @var \Drupal\Core\Field\FieldItemListInterface $field_image */
+        $field_image = $contentEntity->get($field_name);
+      }
+    }
+
+    if ($field_image && !$field_image->isEmpty()) {
+      $values = $field_image->getValue();
+
+      if (!empty($values[0])) {
+        $value = $values[0];
+        $image_data['alt'] = $value['alt'];
+        $image_data['title'] = $value['title'];
+
+        /** @var File $file */
+        $file = $this->fileStorage->load($value['target_id']);
+
+        $image_uri = $file->getFileUri();
+        /** @var ImageStyle $image_style */
+        $image_style = $this->imageStyleStorage->load('medium');
+        $image_data['url'] = $image_style->buildUrl($image_uri);
+      }
+
+    }
+
+    if (empty($image_data['title'])) {
+      $image_data['title'] = $contentEntity->label();
+    }
+
+    return $image_data;
+  }
+
+  /**
+   * Helper function to return the first characters of a string.
+   *
+   * @return string $result
+   */
+  public function getFirstWords($s, $limit)
+  {
+    $result = '';
+    if (strlen($s) > $limit) {
+      $words = explode(' ', $s);
+      foreach ($words as $word) {
+        if (strlen($result) < $limit) {
+          $result .= ' ' . $word;
+        } else {
+          break;
+        }
+      }
+      $result .= '..';
+    } else {
+      $result = $s;
+    }
+    return $result;
+  }
+
+  /**
+   * Get the taxonomy terms for a given Taxonomy Term Vocabulary to use in a select element.
+   *
+   * @return array
+   *   An array of terms.
+   */
+  public function getAllTerms($vocabularyId = 'tags')
+  {
+    $options = [];
+
+    $terms = $this->termStorage->loadTree($vocabularyId);
+    if (!empty($terms)) {
+      foreach ($terms as $term) {
+        $options[$term->tid] = $term->name;
+      }
+    }
+
+    return $options;
+  }
+
+  /**
+   * @param $field_name
+   * @param $bundle
+   * @param $entity_type
+   *
+   * @return string
+   */
+  public function getBetterDescriptionForField($field_name, $bundle, $entity_type)
+  {
+    // Get better descriptions.
+    $better_field_descriptions = $this->configFactory->get('better_field_descriptions.settings')
+      ->get('better_field_descriptions');
+
+    if (isset($better_field_descriptions) && !empty($better_field_descriptions[$entity_type][$bundle][$field_name])) {
+      $data = $better_field_descriptions[$entity_type][$bundle][$field_name];
+      // Stop processing if this is just defaults.
+      return $data;
+    }
+    return '';
+  }
+
+  /**
+   * Utility: find term by name and vid.
+   *
+   * @param null $name
+   *  Term name
+   * @param null $vid
+   *  Term vid
+   *
+   * @return int
+   *  Term id or 0 if none.
+   */
+  public function getTidByName($name = NULL, $vid = NULL)
+  {
+    $properties = [];
+    if (!empty($name)) {
+      $properties['name'] = $name;
+    }
+    if (!empty($vid)) {
+      $properties['vid'] = $vid;
+    }
+    try {
+      $terms = $this->termStorage->loadByProperties($properties);
+      $term = reset($terms);
+    } catch (InvalidPluginDefinitionException $e) {
+      $this->logger->get('maria_custom')->error($e->getMessage());
+    }
+
+    return !empty($term) ? $term->id() : 0;
+  }
+
+  /**
+   * Display a message to the user.
+   *
+   * @param $message
+   *   A message string.
+   */
+  public function addMessage($message)
+  {
+    $output = Markup::create($message);
+    $this->messengerService->addMessage($output);
+  }
+
+}
