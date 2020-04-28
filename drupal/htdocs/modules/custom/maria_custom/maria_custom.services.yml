@@ -1,0 +1,4 @@
+services:
+  maria_custom.service:
+    class: '\Drupal\maria_custom\MariaCustomService'
+    arguments: ['@entity_type.manager', '@entity_field.manager', '@database', '@config.factory', '@logger.factory', '@date.formatter', '@messenger', '@session', '@user.data', '@current_user']

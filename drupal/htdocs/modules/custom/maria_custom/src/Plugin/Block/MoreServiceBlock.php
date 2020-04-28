@@ -7,23 +7,15 @@
 
 namespace Drupal\maria_custom\Plugin\Block;
 
-use Drupal\Core\Url;
+use Drupal\maria_custom\MariaCustomService;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\file\Entity\File;
-use Drupal\image\Entity\ImageStyle;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Drupal\Component\Plugin\Exception\PluginNotFoundException;
-use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 
 /**
  * Provides a block with 4 elements showing more services.
@@ -49,39 +41,11 @@ class MoreServiceBlock extends BlockBase implements ContainerFactoryPluginInterf
   protected $route_match;
 
   /**
-   * Entity type manager.
+   * Custom Module to handle all the Storage managers.
    *
-   * @var EntityTypeManagerInterface
+   * @var MariaCustomService
    */
-  protected $entityTypeManager;
-
-  /**
-   * Node Storage manager.
-   *
-   * @var EntityStorageInterface
-   */
-  protected $nodeStorage;
-
-  /**
-   * Term Storage manager.
-   *
-   * @var EntityStorageInterface
-   */
-  protected $termStorage;
-
-  /**
-   * File Storage manager.
-   *
-   * @var EntityStorageInterface
-   */
-  protected $fileStorage;
-
-  /**
-   * Image Style Storage manager.
-   *
-   * @var EntityStorageInterface
-   */
-  protected $imageStyleStorage;
+  protected $customService;
 
   /**
    * Creates a WebformBlock instance.
@@ -92,25 +56,11 @@ class MoreServiceBlock extends BlockBase implements ContainerFactoryPluginInterf
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $route_match, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $route_match, MariaCustomService $customService) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->route_match = $route_match;
-    $this->entityTypeManager = $entity_type_manager;
-    try {
-      $this->nodeStorage = $this->entityTypeManager->getStorage('node');
-      $this->termStorage = $this->entityTypeManager->getStorage('taxonomy_term');
-      $this->fileStorage = $this->entityTypeManager->getStorage('file');
-      $this->imageStyleStorage = $this->entityTypeManager->getStorage('image_style');
-    }
-    catch (PluginNotFoundException $exception) {
-        throw new NotFoundHttpException("Plugin Not Found Exception");
-      }
-    catch (InvalidPluginDefinitionException $exception) {
-        throw new NotFoundHttpException("Invalid Plugin Definition Exception");
-      }
+    $this->customService = $customService;
   }
 
   /**
@@ -119,14 +69,14 @@ class MoreServiceBlock extends BlockBase implements ContainerFactoryPluginInterf
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     /** @var RouteMatchInterface $route_match */
     $route_match = $container->get('current_route_match');
-    /** @var EntityTypeManagerInterface $entity_type_manager */
-    $entity_type_manager = $container->get('entity_type.manager');
+    /** @var MariaCustomService $custom_service */
+    $custom_service = $container->get('maria_custom.service');
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
       $route_match,
-      $entity_type_manager
+      $custom_service
     );
   }
 
@@ -135,7 +85,6 @@ class MoreServiceBlock extends BlockBase implements ContainerFactoryPluginInterf
    */
   public function build() {
 
-    $nid = FALSE;
     $more_services = [];
 
     if (!empty($this->configuration['promoted_services'])) {
@@ -219,6 +168,7 @@ class MoreServiceBlock extends BlockBase implements ContainerFactoryPluginInterf
         '#theme' => 'maria_custom_service_block',
         '#more_services' => $more_services,
       ];
+      //$build['#cache']['max-age'] = 0;
     }
     else {
       $markup = $this->t('More service block did not find any services.');
@@ -265,7 +215,7 @@ class MoreServiceBlock extends BlockBase implements ContainerFactoryPluginInterf
     $result = [];
     $key = 1;
     foreach ($my_tids as $tid) {
-      $more_service = $this->getServiceDetails($tid);
+      $more_service = $this->customService->getServiceDetails($tid);
       if (!empty($more_service) && $key < ($limit + 1)) {
         $more_service['key'] = $key;
         $result[] = $more_service;
@@ -276,56 +226,6 @@ class MoreServiceBlock extends BlockBase implements ContainerFactoryPluginInterf
     }
 
     return $result;
-  }
-
-  /**
-   * Helper function to get the list of all services details to be used in Related Services templates.
-   * @param int $tid
-   *
-   * @return array $term_item
-   *   An associative array containing tid/taxonomy details value pairs.
-   */
-  private function getServiceDetails($tid)
-  {
-    $term_item = [];
-    $term = $this->termStorage->load($tid);
-
-    if ($term instanceof EntityInterface) {
-      $field_service_image = $term->get('field_service_image');
-      if (!$field_service_image->isEmpty()) {
-        $image_iterator = $field_service_image->getIterator();
-        if ($image_iterator->offsetExists(0)) {
-          $element_image = $image_iterator->offsetGet(0);
-          $value = $element_image->getValue();
-
-          /** @var File $file */
-          $file = $this->fileStorage->load($value['target_id']);
-
-          $term_id = $term->id();
-          $term_url = Url::fromRoute('entity.taxonomy_term.canonical', ['taxonomy_term' => $term_id])->toString();
-
-          $image_uri = $file->getFileUri();
-          /** @var ImageStyle $image_style */
-          $image_style = $this->imageStyleStorage->load('medium');
-          $image_url = $image_style->buildUrl($image_uri);
-
-          $term_item = array(
-            "tid" => $term_id,
-            'key' => 1,
-            "name" => $term->label(),
-            "image" => $image_url,
-            'caption' => $term->field_term_teaser_title->value,
-            'alt' => $value['alt'],
-            'title' => $value['title'],
-            'href' => $term_url,
-            'description' => strip_tags($term->field_term_teaser->value),
-          );
-
-        }
-      }
-    }
-
-    return $term_item;
   }
 
   /**
@@ -393,47 +293,11 @@ class MoreServiceBlock extends BlockBase implements ContainerFactoryPluginInterf
     $special_services = [];
     $key = $start_key;
     foreach ($nids as $nid) {
-      $node = $this->nodeStorage->load($nid);
-      if ($node instanceof EntityInterface && $node->hasField('field_image')) {
-        $field_image = $node->get('field_image');
-        if (!$field_image->isEmpty()) {
-          $image_iterator = $field_image->getIterator();
-          if ($image_iterator->offsetExists(0)) {
-            $element_image = $image_iterator->offsetGet(0);
-            $value = $element_image->getValue();
-            /** @var File $file */
-            $file = $this->fileStorage->load($value['target_id']);
-
-            $nid = $node->id();
-            $node_url = $node->toUrl()->toString();
-
-            if (empty($value['title'])) {
-              $value['title'] = $node->label();
-            }
-            // Caption is the first word in the image title.
-            $title_parts = explode(' ', $value['title']);
-            $caption = $title_parts[0];
-
-            $image_uri = $file->getFileUri();
-            /** @var ImageStyle $image_style */
-            $image_style = $this->imageStyleStorage->load('medium');
-            $image_url = $image_style->buildUrl($image_uri);
-
-            $service_item = array(
-              "nid" => $nid,
-              'key' => $key,
-              "name" => $node->label(),
-              "image" => $image_url,
-              'caption' => $caption,
-              'alt' => $value['alt'],
-              'title' => $value['title'],
-              'href' => $node_url,
-              'description' => $node->field_image_text_preview->value,
-            );
-            $key++;
-            $special_services[] = $service_item;
-          }
-        }
+      $service_item = $this->customService->getSpecialService($nid);
+      if (!empty($service_item)) {
+        $service_item['key'] = $key;
+        $key++;
+        $special_services[] = $service_item;
       }
     }
     return $special_services;
