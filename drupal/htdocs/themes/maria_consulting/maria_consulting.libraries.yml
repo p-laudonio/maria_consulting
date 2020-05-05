@@ -2,3 +2,11 @@ global-styling:
   css:
     theme:
       css/style.css: {}
+category:
+  css:
+    theme:
+      css/category.css: {}
+service:
+  css:
+    theme:
+      css/service.css: {}

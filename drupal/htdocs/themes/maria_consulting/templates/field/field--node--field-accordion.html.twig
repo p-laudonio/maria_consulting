@@ -38,33 +38,6 @@
  * @see template_preprocess_field()
  */
 #}
-{%
-  set classes = [
-    'field',
-    'field--name-' ~ field_name|clean_class,
-    'field--type-' ~ field_type|clean_class,
-    'field--label-' ~ label_display,
-    'field--items',
-  ]
-%}
-
-<div{{ attributes.addClass(classes) }}>
-  {% for item in items %}
-      {% if item.service_body_image %}
-      <div{{ item.attributes.addClass(['field--item', 'block-6']) }}>
-        <div class="description col-sm-5">
-          <figure class="img-polaroid">
-            {{ item.service_body_image }}
-          </figure>
-        </div>
-        <div class="field-content related-services list col-sm-7">
-          {{ item.content }}
-        </div>
-      </div>
-      {% else %}
-      <div{{ item.attributes.addClass('field--item') }}>
-        {{ item.content }}
-      </div>
-      {% endif %}
-  {% endfor %}
-</div>
+{% for item in items %}
+    {{ item.content }}
+{% endfor %}

@@ -91,15 +91,4 @@ class MariaConsulting
     }
   }
 
-  /**
-   * Return the list of Node ID of all spacial services.
-   *
-   * @return array $nids
-   */
-  public static function getSpecialServicesNIDs()
-  {
-    $nids = [33, 12, 18, 14];
-    return $nids;
-  }
-
 }
