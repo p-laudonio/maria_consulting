@@ -137,24 +137,35 @@ class MoreServiceBlock extends BlockBase implements ContainerFactoryPluginInterf
           $my_tids[] = $term['target_id'];
         }
 
-        // In special Service we remove the first link because it is already inside the BreadCrumb.
-        $special_service_nids = $this->getSpecialServicesNIDs();
+        // In Service we remove the first link because it is already inside the BreadCrumb.
+        array_shift($my_tids);
 
-        $skip_first = in_array($node->id(), $special_service_nids);
-        if ($skip_first) {
-          // Deleting first array item
-          array_shift($my_tids);
+        // Load the More Services Node IDs.
+        $field_more_services = $node->get('field_more_services');
+        $more_services_list = $field_more_services->getValue();
+        $my_nids = array();
+        foreach ($more_services_list as $term) {
+          $my_nids[] = $term['target_id'];
         }
+
+        if (!empty($my_nids)) {
+          $total_elements = count($my_tids) + count($my_nids);
+        }
+        else {
+          $total_elements = count($my_tids);
+        }
+
+        if ($total_elements > self::MAX_ELEMENTS) {
+          $tot_removed = $total_elements - self::MAX_ELEMENTS;
+          for ($i=0; $i<$tot_removed; $i++) {
+            // Remove last Taxonomy to give space to the Special Service.
+            array_pop($my_tids);
+          }
+        }
+
         $tags_array = $this->getServicesDetailsByTid($my_tids);
         if (count($tags_array) < self::MAX_ELEMENTS) {
           $max = self::MAX_ELEMENTS - count($tags_array);
-          // Load the More Services Node IDs.
-          $field_more_services = $node->get('field_more_services');
-          $more_services_list = $field_more_services->getValue();
-          $my_nids = array();
-          foreach ($more_services_list as $term) {
-            $my_nids[] = $term['target_id'];
-          }
           $special_services = $this->getSpecialServices($nid, $max, $my_nids);
           $more_services = $this->getMoreServices($tags_array, $special_services);
         } else {

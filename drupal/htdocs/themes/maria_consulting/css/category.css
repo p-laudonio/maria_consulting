@@ -1,0 +1,40 @@
+/*thumbnails
+http://maria-consulting.local:8080/admin/reports/dblog/event/467
+*/
+
+.block-views-blockmy-projects-my-projects-block {
+    background: url(../img/bg.jpg) 0 0 repeat-x #ffffff;
+}
+
+article.project.teaser {
+    margin: 0 0 0 -15px;
+}
+
+article.project.teaser .teaser-content {
+    background-color: #fff;
+    padding-bottom: 10px;
+    margin-bottom: 34px;
+    border: 1px solid #dedede;
+    border-radius: 5px;
+}
+
+article.project.teaser .teaser-content p { padding: 0 5px 0 5px; }
+
+article.project.teaser .teaser-content figure.img-polaroid {
+    margin-bottom: 21px;
+    width: 100%;
+    padding: 6px 6px 7px 6px;
+}
+
+article.project.teaser .teaser-content figure .field--name-field-image img {
+    margin: 0;
+}
+
+article.project.teaser .teaser-content p.font-1 {
+    margin-bottom: 0;
+}
+
+article.project.teaser .teaser-content p.font-1 a.lead {
+    color: #0074bd;
+    font-weight: 500;
+}

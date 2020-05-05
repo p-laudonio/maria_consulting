@@ -7,6 +7,7 @@
 
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_help().
@@ -46,4 +47,29 @@ function maria_custom_theme($existing, $type, $theme, $path) {
       'template' => 'maria-custom-service-block'
     ],
   ];
+}
+
+function maria_custom_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
+
+  if ($view->id() == 'taxonomy_term' && $display_id === 'page_1') {
+    if ($taxonomy = \Drupal::routeMatch()->getParameter('taxonomy_term')) {
+      $vocabularyId = $taxonomy->getVocabularyId();
+      if ($vocabularyId == 'tags') {
+        $options = array(
+          'id' => 'area_text_custom',
+          'table' => 'views',
+          'field' => 'area_text_custom',
+          'relationship' => 'none',
+          'group_type' => 'none',
+          'admin_label' => '',
+          'empty' => TRUE,
+          'tokenize' => FALSE,
+          'content' => '<h2>Related Services</h2>',
+          'plugin_id' => 'text_custom',
+        );
+        $view->setHandler('page_1', 'header', 'area_text_custom', $options);
+      }
+    }
+  }
+
 }

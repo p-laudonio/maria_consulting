@@ -390,6 +390,53 @@ class MariaCustomService
   }
 
   /**
+   * Utility: find Entity ID by alias.
+   *
+   * @param string $alias
+   *  The alias of the entity
+   *
+   * @return ContentEntityInterface|NULL
+   *  ContentEntityInterface or FALSE if none.
+   */
+  public function getEntityByAlias($alias)
+  {
+    $entity = FALSE;
+    $url = Url::fromUri('internal:' . $alias);
+    // Check exist alias.
+    if ($url->isRouted()) {
+      $params = $url->getRouteParameters();
+      $entity_type = key($params);
+      /** @var ContentEntityInterface $entity */
+      $entity = $this->entityTypeManager->getStorage($entity_type)->load($params[$entity_type]);
+    }
+
+    return $entity;
+  }
+
+  /**
+   * Utility: find an URL inside an HTML string.
+   *
+   * @param string $html_link
+   *  The HTML string that contains something like:
+   *  <a href="alias" >Text</a>
+   *
+   * @return string
+   *  The alias or FALSE if it does not find it.
+   */
+  public function findURLfromHTML($html_link)
+  {
+    $alias = "";
+
+    if (preg_match('/<a href="(.+)" (.+)>/', $html_link, $match)) {
+      if (isset($match[1])) {
+        $alias = $match[1];
+      }
+    }
+
+    return $alias;
+  }
+
+  /**
    * Utility: find term by name and vid.
    *
    * @param null $name

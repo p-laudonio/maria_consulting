@@ -31,19 +31,14 @@ class Breadcrumb extends \Drupal\bootstrap\Plugin\Preprocess\Breadcrumb
     if ($node = \Drupal::routeMatch()->getParameter('node')) {
       $content_type = $node->bundle();
       if ($content_type == "service" && isset($node->field_tags)) {
-        $special_service_nids = MariaConsulting::getSpecialServicesNIDs();
-        // Set the node ID if we're on a node page.
-        $wide_template = in_array($node->id(), $special_service_nids);
-        if ($wide_template) {
-          $field_tags = $node->get('field_tags');
-          $iterator = $field_tags->getIterator();
-          if ($iterator->offsetExists(0)) {
-            $first_tag = $iterator->offsetGet(0);
-            $my_view = $first_tag->view();
-            $variables['breadcrumb'][] = array(
-              'text' => render($my_view)
-            );
-          }
+        $field_tags = $node->get('field_tags');
+        $iterator = $field_tags->getIterator();
+        if ($iterator->offsetExists(0)) {
+          $first_tag = $iterator->offsetGet(0);
+          $my_view = $first_tag->view();
+          $variables['breadcrumb'][] = array(
+            'text' => render($my_view)
+          );
         }
       }
     }

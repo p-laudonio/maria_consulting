@@ -35,7 +35,7 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page
       $content_type = $node->bundle();
       $nid = $node->id();
       $variables['page_name'] = 'page-' . $nid;
-      if (in_array($content_type, array("page", 'work_experience'))) {
+      if (in_array($content_type, array("page", 'work_experience')) && !empty($variables['page']['sidebar_second'])) {
         $variables['page']['sidebar_second']['#region'] = 'sidebar_second_' . $content_type;
       }
 

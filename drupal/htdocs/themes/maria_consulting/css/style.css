@@ -45,8 +45,15 @@ h2 > span {
     color: #a2d1e0;
     font-size: 34px;
 }
-p {
+.field--name-description p, p {
     margin-bottom: 20px;
+}
+article.project, article.work-experience.full {
+    font-size: 18px;
+    line-height: 1.4em;
+}
+article .field--item p.last {
+    margin-top: 10px;
 }
 .p1 {
     margin-bottom: 32px;
@@ -55,12 +62,14 @@ p {
     color: #a2d1e0;
     font-size: 14px;
     line-height: 20px;
+    font-weight: 600;
 }
 p.lead {
     margin-bottom: 13px;
 }
 a.lead {
     color: #a2d1e0;
+    font-weight: 600;
 }
 a.lead:hover {
     color: #545454;
@@ -209,7 +218,8 @@ article.work-experience .field--name-body .field--item { padding-bottom: 10px; }
     list-style: none;
 }
 .list li {
-    margin: 10px 0 0px 0;
+    list-style: none;
+    margin: 10px 0 0 0;
     padding-left: 18px;
     font-size: 12px;
     line-height: 20px;
@@ -723,23 +733,6 @@ header .navbar-default{
     float: left;
     margin: 0 30px 0 0;
 }
-.block-6 {
-    margin-bottom: 39px;
-    overflow: hidden;
-}
-.block-6 figure {
-    float: left;
-    margin: 0 30px 0 0;
-}
-.block-6 .description {
-    margin: 0; padding: 0; text-align: justify;
-}
-.block-6 .related-services ul {
-    margin-left: 20px;
-}
-.block-6 > div {
-    overflow: hidden;
-}
 /*dl-horizontal*/
 .dl-horizontal {
     margin: 0;
@@ -803,43 +796,6 @@ header .navbar-default{
     display: block;
     font-weight: bold;
     padding: 3px 0 4px 0;
-}
-/*thumbnails*/
-.thumbnails {
-    margin: -34px 0 0 -15px;
-    overflow: hidden;
-    padding-left: 0;
-    background-color: transparent;
-}
-.thumbnails li {
-    margin-top: 34px;
-    margin-bottom: 0;
-    float: left;
-    background-color: transparent;
-}
-.thumbnails li .maxheight {
-    margin-left: 15px;
-    background-color: #fff;
-    padding-bottom: 10px;
-}
-.thumbnails li .maxheight p { padding: 0 5px 0 5px; }
-.thumbnails .thumbnail {
-    -webkit-border-radius: 0;
-    -moz-border-radius: 0;
-    border-radius: 0;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-    border: none;
-    padding: 0;
-    background-color: transparent;
-}
-.thumbnails .thumbnail figure {
-    margin-bottom: 21px;
-    width: 100%;
-}
-.thumbnails .thumbnail p.font-1 {
-    margin-bottom: 0;
 }
 /*dl-horizontal-2*/
 .dl-horizontal-2 {
@@ -1140,18 +1096,11 @@ footer .col-md-12 > span > span a:hover {
 }
 
 /* additional style for Services */
-.field-name-field-tags .field-label {
-    font-size: 30px; font-weight: bold;
-    letter-spacing: -2px;
-    margin: 53px 0 37px;
-    color: #545454;
-    font-family: inherit;
-    line-height: 1em;
-}
-
 .field--name-field-right-body .list { margin-left: 0; padding-left: 0; }
-.field--name-field-right-body .list li, .field--name-description, .region-sidebar-second, .page-node-type-service .field--name-body,
-.col-md-3 .field-name-field-tags, .field--name-body .related-services.list ul.list li { font-size: 18px; line-height: 1.4em; }
+.field--name-field-right-body .list li, .field--name-description, .region-sidebar-second,
+.page-node-type-service .field--name-body, .paragraph-accordion,
+.col-md-3 .field-name-field-tags, .field--name-body .related-services.list ul.list li
+{ font-size: 18px; line-height: 1.4em; }
 .field--name-body .related-services.list ul.list { margin-left: 0; padding-left: 0; }
 .region-sidebar-second .list li { font-size: 16px; }
 .field--name-field-right-body .promo, .field--name-description .row .promo, .region-sidebar-second {
@@ -1175,10 +1124,6 @@ footer .col-md-12 > span > span a:hover {
 }
 .field--name-field-right-body .promo a.button:hover, .region-sidebar-second .button:hover { border-bottom-color: #4CAF50; background-color: #e7e7e7; color: black; }
 .region-sidebar-second .border-bottom { padding-top: 20px; margin-bottom: 20px; }
-
-.view-taxonomy-term .block-6 p.lead { font-size: 1.33em; line-height: 1.4em; }
-.view-taxonomy-term .block-6 .related-services { padding: 0; }
-.view-taxonomy-term .block-6 .related-services ul { margin: 0; padding: 0; list-style: none }
 
 .row.responsive-grid-systen div { font-size: 12px; border: 2px solid #ddd; background-color: #0b698b; padding: 10px; margin: 0; color: #fff4f4; }
 .row.responsive-grid-systen { margin-bottom: 20px; }
@@ -1215,9 +1160,6 @@ footer .col-md-12 > span > span a:hover {
         width: inherit;
         float: left;
     }
-    .view-taxonomy-term .block-6 .related-services ul {
-        margin-left: 30px;
-    }
     .block-404 .span5 > div {
         padding-right: 100px;
     }
@@ -1229,10 +1171,7 @@ footer .col-md-12 > span > span a:hover {
     }
     .region-navigation-collapsible nav ul.menu li a { padding: 0 12px; }
 }
-@media (min-width: 980px) and (max-width: 1199px) {
-    .thumbnails li {
-        width: 33.33%;
-    }
+@media (min-width: 992px) and (max-width: 1199px) {
     header h1.brand a {
         font-size: 35px;
         display: inline-block;
@@ -1241,11 +1180,8 @@ footer .col-md-12 > span > span a:hover {
     .block-2 .col-md-3 {
         min-height: 250px;
     }
-    .view-taxonomy-term .block-6 .related-services ul {
-        margin-left: 30px;
-    }
 }
-@media (max-width: 979px) {
+@media (max-width: 991px) {
     .container {
         padding: 0 20px;
     }
@@ -1270,33 +1206,8 @@ footer .col-md-12 > span > span a:hover {
     .social-icons {
         margin-right: 0;
     }
-    .block-6  .col-sm-9 {
-        width: 100%;
-        float: none;
-    }
-    .view-taxonomy-term .block-6 .related-services ul {
-        float: none;
-        width: auto;
-        margin-left: 0;
-        margin-top: 20px;
-    }
-    .thumbnails li {
-        width: 50%;
-    }
-    .thumbnails li p {
-        min-height: 70px;
-    }
     .field--name-field-right-body .promo, .field--name-description .row .promo, .region-sidebar-second {
         margin-left: 0;
-    }
-    .view-taxonomy-term .block-6 .related-services.col-sm-3 {
-        padding: 0; width: 100%;
-    }
-    .view-taxonomy-term .block-6 .related-services ul {
-        margin-top: 5px;
-    }
-    .view-taxonomy-term .block-6 .related-services ul li {
-        font-size: 16px;
     }
 }
 @media (min-width: 768px) and (max-width: 979px) {
@@ -1438,13 +1349,7 @@ footer .col-md-12 > span > span a:hover {
     }
 }
 @media (min-width: 626px) and (max-width: 767px) {
-    .thumbnails li {
-        width: 46%;
-        margin-left: 20px;
-    }
-    .thumbnails li .maxheight {
-        margin-left: 0;
-    }
+
 }
 @media (max-width: 625px) {
     .flexslider ul.slides li .field-content p {
@@ -1456,23 +1361,9 @@ footer .col-md-12 > span > span a:hover {
         top: 10px;
         margin-top: 0;
     }
-    .thumbnails {
-        margin-left: 0;
-    }
-    .thumbnails > li .maxheight {
-        float: none;
-        margin-left: 0;
-    }
 }
 @media (min-width: 482px) and (max-width: 625px) {
-    .thumbnails { margin-left: -10px; }
-    .thumbnails li {
-        width: 45%;
-        margin-left: 10px;
-    }
-    .thumbnails li .maxheight {
-        margin-left: 0;
-    }
+
 }
 @media (max-width: 481px) {
     .social-icons {
@@ -1532,29 +1423,8 @@ footer .col-md-12 > span > span a:hover {
     .footer .border-top {
         padding-top: 35px;
     }
-    .block-6 figure {
-        float: none;
-        margin: 0 0 20px 0;
-        width: 100%;
-    }
-    .view-taxonomy-term .block-6 p.lead {
-        font-size: 1.53em;
-    }
-    .view-taxonomy-term .block-6 .related-services ul {
-        margin-top: 15px;
-    }
     .list li {
         font-size: 18px;
-    }
-    .thumbnails {
-        margin-left: 0;
-    }
-    .thumbnails li {
-        width: 100%;
-        margin-left: 0;
-    }
-    .thumbnails li .maxheight {
-        margin-left: 0;
     }
 }
 @media (min-width: 321px) and (max-width: 481px) {
