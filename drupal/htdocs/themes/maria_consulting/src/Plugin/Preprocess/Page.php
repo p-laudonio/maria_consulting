@@ -27,6 +27,7 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page
    */
   public function preprocess(array &$variables, $hook, array $info)
   {
+    $variables['page']['header_image'] = FALSE;
     $variables['page_name'] = 'page-generic';
     $is_front = \Drupal::service('path.matcher')->isFrontPage();
     if ($is_front) {
@@ -51,6 +52,22 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page
           $variables['node_webform'] = Markup::create($raw_html);
         }
       }
+
+      elseif ($content_type == "project" && $node->hasField('field_header_image')) {
+        $field_image = $node->get('field_header_image');
+        if (!$field_image->isEmpty()) {
+          $image_iterator = $field_image->getIterator();
+          if ($image_iterator->offsetExists(0)) {
+            $element_image = $image_iterator->offsetGet(0);
+            $element_image_view = $element_image->view();
+            $raw_html = render($element_image_view);
+            $markup = \Drupal\Core\Render\Markup::create($raw_html);
+            $variables['page']['header_image'] = $markup;
+            $variables['page_name'] .= ' has-header-image';
+          }
+        }
+      }
+
     }
     /** @var Term $taxonomy_term */
     elseif ($taxonomy_term = \Drupal::routeMatch()->getParameter('taxonomy_term')) {
@@ -59,6 +76,7 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page
         $variables['page_name'] = 'page-service-taxonomy';
         $variables['page']['service_page_title'] = Markup::create($variables['page']['#title']);
         $variables['page']['service_image'] = FALSE;
+        $variables['page']['service_title_position'] = '';
 
         if ($taxonomy_term->hasField('field_service_image')) {
           $field_image = $taxonomy_term->get('field_service_image');
@@ -71,6 +89,16 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page
               $markup = \Drupal\Core\Render\Markup::create($raw_html);
               $variables['page']['service_image'] = $markup;
               $variables['page_name'] = 'page-service-taxonomy has-header-image taxonomy-term-' . $taxonomy_term->id();
+            }
+          }
+        }
+
+        if ($taxonomy_term->hasField('field_title_position')) {
+          $field_title_position_values = $taxonomy_term->get('field_title_position')->getValue();
+          if (!empty($field_title_position_values)) {
+            $field_title_position_value = reset($field_title_position_values);
+            if (isset($field_title_position_value['value'])) {
+              $variables['page']['service_title_position'] = ' ' . $field_title_position_value['value'];
             }
           }
         }

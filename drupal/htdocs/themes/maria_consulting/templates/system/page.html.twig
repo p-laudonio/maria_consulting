@@ -62,8 +62,20 @@
 {# Main #}
 {% block main %}
   <div role="main" class="main-container {{ container }} js-quickedit-main-content {{ page_name }}">
-    <div class="row">
+      {% if page.header_image %}
+      <div class="row">
+          <section class="col-sm-12">
+              <div class="region region-content header-image">
+                  {{ page.header_image }}
+              </div>
+          </section>
+      </div>
+      {% endif %}
 
+    <div class="row">
+      {% if page.header_image %}
+      <div class="border-bottom"></div>
+      {% endif %}
       {# Header #}
       {% if page.header and not is_front %}
         {% block header %}

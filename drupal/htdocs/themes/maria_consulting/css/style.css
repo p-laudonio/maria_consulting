@@ -566,45 +566,6 @@ header .navbar-default{
     font-weight: bold;
 }
 
-.page-service-taxonomy .flexslider ul.slides li .field-content h1 {
-    font-size: 50px;
-}
-.taxonomy-term-1 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-5 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-6 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-17 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-23 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-24 .flexslider ul.slides li .field-content h1 {
-    top: auto;
-    bottom: 0;
-    left: 0;
-    right: auto;
-}
-.taxonomy-term-7 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-9 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-11 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-13 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-16 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-18 .flexslider ul.slides li .field-content h1 {
-    top: auto;
-    bottom: 0;
-}
-.taxonomy-term-8 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-12 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-22 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-27 .flexslider ul.slides li .field-content h1 {
-    top: 0;
-    left: 0;
-    right: auto;
-    margin-top: 0;
-}
-.taxonomy-term-4 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-10 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-29 .flexslider ul.slides li .field-content h1 {
-    top: 0;
-    margin-top: 0;
-}
-
 .flexslider ul.slides li .field-content h1 span, .flexslider ul.slides li h1 a,
 .flexslider ul.slides li .field-content p span, .flexslider ul.slides li p a {
     font-size: 50px;

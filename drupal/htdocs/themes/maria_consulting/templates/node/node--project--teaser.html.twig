@@ -76,14 +76,21 @@
 
 {{ attach_library('maria_consulting/category') }}
 
+{% if content.field_image['#items'].title is not empty %}
+    {% set short_page_title = content.field_image['#items'].title %}
+{% else %}
+    {% set short_page_title = node.title.value %}
+{% endif %}
+
 <article{{ attributes.addClass(classes) }}>
     <div{{ content_attributes.addClass(['teaser-content']) }}>
         <figure class="img-polaroid">{{ content.field_image }}</figure>
         <p class="font-1"><a href="{{ url }}" title="{{ content.field_job[0]['#title'] }}"
-                             class="lead">{{ node.title.value }}</a><br/>
-            {{ content.field_image_text_preview|field_value }} <a target="_blank" rel="nofollow"
-                                                                  title="Visit {{ node.title.value }} web site"
-                                                                  href="{{ content.field_web_site[0]['#url'] }}"
-                                                                  class="link-1"></a></p>
+                             class="lead">{{ short_page_title }}</a><br/>
+            {{ content.field_image_text_preview|field_value }} <a
+                    {% if content.field_web_site[0]['#url'].isExternal() %}target="_blank" rel="nofollow"{% endif %}
+                    title="Visit {{ node.title.value }} web site"
+                    href="{{ content.field_web_site[0]['#url'] }}"
+                    class="link-1"></a></p>
     </div>
 </article>
