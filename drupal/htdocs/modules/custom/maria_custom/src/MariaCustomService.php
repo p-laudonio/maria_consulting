@@ -194,7 +194,7 @@ class MariaCustomService
     $term_item = [];
     $term = $this->termStorage->load($tid);
     if ($term instanceof ContentEntityInterface) {
-      $image_data = $this->getImageData($term, 'field_service_image');
+      $image_data = $this->getImageData($term);
       $term_id = $term->id();
       $term_url = $term->toUrl()->toString();
 
@@ -230,6 +230,27 @@ class MariaCustomService
   }
 
   /**
+   * Return info on the Image to use on the Preview Mode.
+   * @param  ContentEntityInterface $contentEntity
+   *
+   * @return array $image_info
+   */
+  private function getFieldImageInfo($contentEntity)
+  {
+    $image_info = [];
+    if ($contentEntity->hasField('field_service_image')) {
+      $image_info = ['field_service_image', 'medium'];
+    }
+    elseif ($contentEntity->hasField('field_header_image')) {
+      $image_info = ['field_header_image', 'thumbnail'];
+    }
+    elseif ($contentEntity->hasField('field_image')) {
+      $image_info = ['field_image', 'medium'];
+    }
+    return $image_info;
+  }
+
+  /**
    * Return a Special Service Node by Node ID.
    * @param  int $nid
    *
@@ -240,12 +261,7 @@ class MariaCustomService
     $service_item = [];
     $node = $this->nodeStorage->load($nid);
     if ($node instanceof ContentEntityInterface) {
-      if ($node->hasField('field_header_image')) {
-        $image_data = $this->getImageData($node, 'field_header_image', 'thumbnail');
-      }
-      elseif ($node->hasField('field_image')) {
-        $image_data = $this->getImageData($node, 'field_image');
-      }
+      $image_data = $this->getImageData($node);
 
       $nid = $node->id();
       $node_url = $node->toUrl()->toString();
@@ -288,15 +304,24 @@ class MariaCustomService
    * @param ContentEntityInterface $contentEntity
    * @param string $field_name
    *
-   * @return array $image_data
+   * @return array|bool $image_data
    */
-  public function getImageData(ContentEntityInterface $contentEntity, $field_name, $image_style = 'medium')
+  public function getImageData(ContentEntityInterface $contentEntity)
   {
     $image_data = [
       'url' => '/themes/maria_consulting/img/image-blank.png',
       'alt' => '',
       'title' => '',
+      'found' => false,
     ];
+
+    $image_info = $this->getFieldImageInfo($contentEntity);
+    if (count($image_info) == 2) {
+      list($field_name, $image_style) = $image_info;
+    }
+    else {
+      return $image_data;
+    }
 
     $field_image = FALSE;
     if ($contentEntity->hasField($field_name)) {
@@ -323,6 +348,7 @@ class MariaCustomService
         /** @var ImageStyle $image_style */
         $image_style = $this->imageStyleStorage->load($image_style);
         $image_data['url'] = $image_style->buildUrl($image_uri);
+        $image_data['found'] = true;
       }
 
     }
