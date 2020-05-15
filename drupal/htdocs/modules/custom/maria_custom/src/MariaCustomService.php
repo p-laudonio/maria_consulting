@@ -19,12 +19,21 @@ use Drupal\Core\Render\Markup;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\user\UserData;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
+use Drupal\Core\Link;
 use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
+use Drupal\menu_link_content\Plugin\Menu\MenuLinkContent;
 
 class MariaCustomService
 {
+  /**
+   * The menu link manager interface.
+   *
+   * @var \Drupal\Core\Menu\MenuLinkManagerInterface
+   */
+  protected $menuLinkManager;
 
   /**
    * Entity type manager.
@@ -194,7 +203,7 @@ class MariaCustomService
     $term_item = [];
     $term = $this->termStorage->load($tid);
     if ($term instanceof ContentEntityInterface) {
-      $image_data = $this->getImageData($term, 'field_service_image');
+      $image_data = $this->getImageData($term);
       $term_id = $term->id();
       $term_url = $term->toUrl()->toString();
 
@@ -230,6 +239,27 @@ class MariaCustomService
   }
 
   /**
+   * Return info on the Image to use on the Preview Mode.
+   * @param  ContentEntityInterface $contentEntity
+   *
+   * @return array $image_info
+   */
+  private function getFieldImageInfo($contentEntity)
+  {
+    $image_info = [];
+    if ($contentEntity->hasField('field_service_image')) {
+      $image_info = ['field_service_image', 'medium'];
+    }
+    elseif ($contentEntity->hasField('field_header_image')) {
+      $image_info = ['field_header_image', 'thumbnail'];
+    }
+    elseif ($contentEntity->hasField('field_image')) {
+      $image_info = ['field_image', 'medium'];
+    }
+    return $image_info;
+  }
+
+  /**
    * Return a Special Service Node by Node ID.
    * @param  int $nid
    *
@@ -240,7 +270,7 @@ class MariaCustomService
     $service_item = [];
     $node = $this->nodeStorage->load($nid);
     if ($node instanceof ContentEntityInterface) {
-      $image_data = $this->getImageData($node, 'field_image');
+      $image_data = $this->getImageData($node);
 
       $nid = $node->id();
       $node_url = $node->toUrl()->toString();
@@ -249,12 +279,17 @@ class MariaCustomService
       $title_parts = explode(' ', $image_data['title']);
       $caption = $title_parts[0];
 
-      if ($node->hasField('field_image_text_preview')) {
+      $description = '';
+      if ($node->bundle() == 'service' && $node->hasField('field_image_text_preview')) {
         $description = $node->field_image_text_preview->value;
       }
 
       if (empty($description) && $node->hasField('field_teaser')) {
         $description = $this->getFirstWords(strip_tags($node->field_teaser->value), 137);
+      }
+
+      if (empty($description) && $node->hasField('body')) {
+        $description = $this->getFirstWords(strip_tags($node->body->value), 137);
       }
 
       $service_item = array(
@@ -278,15 +313,24 @@ class MariaCustomService
    * @param ContentEntityInterface $contentEntity
    * @param string $field_name
    *
-   * @return array $image_data
+   * @return array|bool $image_data
    */
-  public function getImageData(ContentEntityInterface $contentEntity, $field_name)
+  public function getImageData(ContentEntityInterface $contentEntity)
   {
     $image_data = [
       'url' => '/themes/maria_consulting/img/image-blank.png',
       'alt' => '',
       'title' => '',
+      'found' => false,
     ];
+
+    $image_info = $this->getFieldImageInfo($contentEntity);
+    if (count($image_info) == 2) {
+      list($field_name, $image_style) = $image_info;
+    }
+    else {
+      return $image_data;
+    }
 
     $field_image = FALSE;
     if ($contentEntity->hasField($field_name)) {
@@ -311,8 +355,9 @@ class MariaCustomService
 
         $image_uri = $file->getFileUri();
         /** @var ImageStyle $image_style */
-        $image_style = $this->imageStyleStorage->load('medium');
+        $image_style = $this->imageStyleStorage->load($image_style);
         $image_data['url'] = $image_style->buildUrl($image_uri);
+        $image_data['found'] = true;
       }
 
     }
@@ -476,6 +521,60 @@ class MariaCustomService
   {
     $output = Markup::create($message);
     $this->messengerService->addMessage($output);
+  }
+
+  /**
+   * Return the entire menu trail from the current menu item.
+   * @param ContentEntityInterface $contentEntity
+   *
+   * @return bool|MenuLinkContent $content_link
+   */
+  public function getMenuLinkContent(ContentEntityInterface $contentEntity) {
+    $this->menuLinkManager = \Drupal::service('plugin.manager.menu.link');
+    $menu_name = 'main';
+    $content_link = false;
+    $url = $contentEntity->toUrl();
+    $route_links = $this->menuLinkManager->loadLinksByRoute($url->getRouteName(), $url->getRouteParameters(), $menu_name);
+    if (!empty($route_links)) {
+      /** @var MenuLinkContent $content_link */
+      $content_link = reset($route_links);
+    }
+    return $content_link;
+  }
+
+  /**
+   * Return the entire menu trail from the current menu item.
+   * @param MenuLinkContent $content_link
+   *
+   * @return array $links
+   */
+  public function getMenuLinkTrail(MenuLinkContent $content_link) {
+    $this->menuLinkManager = \Drupal::service('plugin.manager.menu.link');
+    $links = [];
+
+    $link_plugin_id = $content_link->getPluginId();
+    $menuTrail = $this->menuLinkManager->getParentIds($link_plugin_id);
+
+    // Generate basic breadcrumb trail from active trail.
+    // Keep same link ordering as Menu Breadcrumb (so also reverses menu trail)
+    foreach (array_reverse($menuTrail) as $id) {
+      $plugin = $this->menuLinkManager->createInstance($id);
+
+      // Skip items that have an empty URL if the option is set.
+      if (empty($plugin->getUrlObject()->toString())) {
+        continue;
+      }
+
+      $link = Link::fromTextAndUrl($plugin->getTitle(), $plugin->getUrlObject());
+      $links[] = $link;
+
+      // Stop items when the first url matching occurs.
+      if ($plugin->getUrlObject()->toString() == Url::fromRoute('<current>')->toString()) {
+        break;
+      }
+
+    }
+    return $links;
   }
 
 }

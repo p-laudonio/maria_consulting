@@ -240,9 +240,9 @@ article.work-experience .field--name-body .field--item { padding-bottom: 10px; }
     display: inline-block;
     background: #a2d1e0;
     filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
-    -webkit-border-radius: 0px;
-    -moz-border-radius: 0px;
-    border-radius: 0px;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
     border: none;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
@@ -258,6 +258,10 @@ article.work-experience .field--name-body .field--item { padding-bottom: 10px; }
     -moz-transition: none;
     -o-transition: none;
     transition: none;
+}
+.search-form .btn {
+    padding-top: 10px;
+    margin-top: 0;
 }
 .btn span {
     background: url(../img/btn.gif) right 5px no-repeat;
@@ -276,6 +280,15 @@ article.work-experience .field--name-body .field--item { padding-bottom: 10px; }
 
 .breadcrumb { margin: 0; padding: 0; }
 .page-node-type-service .breadcrumb { margin: -20px 0 10px 0; }
+
+/*------ search ------- */
+.search-details {
+    padding-bottom: 15px;
+}
+
+.search-details h2 {
+    margin: 0 0 15px 0;
+}
 
 /*------ header ------- */
 header {
@@ -304,27 +317,55 @@ header.header-page-front .border-bottom {
 }
 
 /*brand*/
-header h1.brand {
+header .brand {
     position: relative;
     z-index: 9999;
     display: inline-block;
     float: left;
-    margin: 38px 0 0 0;
+    margin: 10px 0 0 0;
     padding: 0;
-    font-size: 0;
-    line-height: 0;
-}
-header h1.brand a {
-    display: inline-block;
     text-decoration: none;
     font-size: 50px;
     line-height: 1em;
     color: #545454;
     font-weight: bold;
     letter-spacing: -2px;
+    clear: both;
+    width: 100%;
 }
-header h1.brand a span {
+header .brand span {
     color: #a2d1e0;
+}
+
+header .region-navigation {
+    width: 100%;
+    clear: both;
+    float: left;
+}
+
+header .region-navigation .navbar-brand {
+    float: left;
+    height: auto;
+    padding: 0;
+    font-size: 15px;
+    line-height: 15px;
+    color: #545454;
+    font-weight: bold;
+    text-align: left;
+}
+
+header .region-navigation .search-block-form {
+    padding-top: 10px;
+    float: left; clear: both;
+    width: 100%;
+}
+
+header .region-navigation .search-block-form #search-block-form {
+    max-width: 400px;
+}
+
+header .region-navigation .search-block-form .btn {
+    margin-top: 0;
 }
 
 header .navbar-default{
@@ -416,6 +457,9 @@ header .navbar-default{
         right: 5px;
         bottom: 8px;
     }
+    .path-taxonomy-tags .region-navigation-collapsible nav ul.menu > li.services > a:after,
+    .page-node-type-service .region-navigation-collapsible nav ul.menu > li.services > a:after,
+    .page-node-type-project .region-navigation-collapsible nav ul.menu > li.projects > a:after,
     .region-navigation-collapsible nav ul.menu > li.sfHover > a:after,
     .region-navigation-collapsible nav ul.menu > li.active > a:after,
     .region-navigation-collapsible nav ul.menu > li:hover > a:after {
@@ -429,6 +473,12 @@ header .navbar-default{
         top: -59px;
     }
 
+    .path-taxonomy-tags .region-navigation-collapsible nav ul.menu > li.services > a,
+    .path-taxonomy-tags .region-navigation-collapsible nav ul.menu > li.services > a:hover,
+    .page-node-type-service .region-navigation-collapsible nav ul.menu > li.services > a,
+    .page-node-type-service .region-navigation-collapsible nav ul.menu > li.services > a:hover,
+    .page-node-type-project .region-navigation-collapsible nav ul.menu > li.projects > a,
+    .page-node-type-project .region-navigation-collapsible nav ul.menu > li.projects > a:hover,
     .region-navigation-collapsible nav ul.menu > li.sfHover > a,
     .region-navigation-collapsible nav ul.menu > li.sfHover > a:hover,
     .region-navigation-collapsible nav ul.menu > li > a:hover,
@@ -445,6 +495,12 @@ header .navbar-default{
         -o-transition: 0.3s;
         transition: 0.3s;
     }
+    .path-taxonomy-tags .region-navigation-collapsible nav ul.menu > li.services > a span,
+    .path-taxonomy-tags .region-navigation-collapsible nav ul.menu > li.services > a:hover span,
+    .page-node-type-service .region-navigation-collapsible nav ul.menu > li.services > a span,
+    .page-node-type-service .region-navigation-collapsible nav ul.menu > li.services > a:hover span,
+    .page-node-type-project .region-navigation-collapsible nav ul.menu > li.projects > a span,
+    .page-node-type-project .region-navigation-collapsible nav ul.menu > li.projects > a:hover span,
     .region-navigation-collapsible nav ul.menu > li.sfHover > a span,
     .region-navigation-collapsible nav ul.menu > li.sfHover > a:hover span,
     .region-navigation-collapsible nav ul.menu > li > a:hover span,
@@ -564,45 +620,6 @@ header .navbar-default{
     white-space: nowrap;
     letter-spacing: -3px;
     font-weight: bold;
-}
-
-.page-service-taxonomy .flexslider ul.slides li .field-content h1 {
-    font-size: 50px;
-}
-.taxonomy-term-1 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-5 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-6 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-17 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-23 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-24 .flexslider ul.slides li .field-content h1 {
-    top: auto;
-    bottom: 0;
-    left: 0;
-    right: auto;
-}
-.taxonomy-term-7 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-9 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-11 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-13 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-16 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-18 .flexslider ul.slides li .field-content h1 {
-    top: auto;
-    bottom: 0;
-}
-.taxonomy-term-8 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-12 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-22 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-27 .flexslider ul.slides li .field-content h1 {
-    top: 0;
-    left: 0;
-    right: auto;
-    margin-top: 0;
-}
-.taxonomy-term-4 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-10 .flexslider ul.slides li .field-content h1,
-.taxonomy-term-29 .flexslider ul.slides li .field-content h1 {
-    top: 0;
-    margin-top: 0;
 }
 
 .flexslider ul.slides li .field-content h1 span, .flexslider ul.slides li h1 a,
@@ -1004,29 +1021,30 @@ footer a.footer-logo:hover { text-decoration: none; }
 footer a.footer-logo > span {
     color: #a2d1e0;
 }
-footer .col-md-12 > span > span {
+footer .col-md-12 .long-address > span {
     display: inline-block;
-    margin: 8px 0 0 15px;
+    margin: 8px 0 0 8px;
 }
-footer .col-md-12 > span > span a {
+footer .col-md-12 .long-address > span a {
     color: #979797;
 }
-footer .col-md-12 > span > span a:hover {
+footer .col-md-12 .long-address > span a:hover {
     color: #a2d1e0;
 }
 /*social-icons*/
 .social-icons {
     float: right;
     overflow: hidden;
-    margin-right: 45px;
+    margin-right: 0;
 }
 .social-icons > span {
     display: inline-block;
     float: left;
-    margin: 7px 10px 0 0;
+    margin: 8px 10px 0 0;
 }
 .social-icons ul {
     margin: 0;
+    padding-left: 0;
     list-style-type: none;
     overflow: hidden;
     display: inline-block;
@@ -1172,7 +1190,7 @@ footer .col-md-12 > span > span a:hover {
     .region-navigation-collapsible nav ul.menu li a { padding: 0 12px; }
 }
 @media (min-width: 992px) and (max-width: 1199px) {
-    header h1.brand a {
+    header .brand {
         font-size: 35px;
         display: inline-block;
         float: left;
@@ -1185,7 +1203,7 @@ footer .col-md-12 > span > span a:hover {
     .container {
         padding: 0 20px;
     }
-    header h1.brand a {
+    header .brand {
         font-size: 35px;
         display: inline-block;
         float: left;
@@ -1223,6 +1241,9 @@ footer .col-md-12 > span > span a:hover {
     .region-navigation-collapsible nav ul > li a {
         font-weight: normal;
     }
+    .path-taxonomy-tags .region-navigation-collapsible nav ul.menu > li.services > a:after,
+    .page-node-type-service .region-navigation-collapsible nav ul.menu > li.services > a:after,
+    .page-node-type-project .region-navigation-collapsible nav ul.menu > li.projects > a:after,
     .region-navigation-collapsible nav ul > li.sfHover > a:after,
     .region-navigation-collapsible nav ul > li.active > a:after,
     .region-navigation-collapsible nav ul > li:hover > a:after {
@@ -1301,6 +1322,9 @@ footer .col-md-12 > span > span a:hover {
     .region-navigation-collapsible nav ul.menu li.last a {
         border-width: 0;
     }
+    .path-taxonomy-tags .region-navigation-collapsible nav ul.menu > li.services > a,
+    .page-node-type-service .region-navigation-collapsible nav ul.menu > li.services > a,
+    .page-node-type-project .region-navigation-collapsible nav ul.menu > li.projects > a,
     .region-navigation-collapsible nav ul.menu li a:hover, .region-navigation-collapsible nav ul.menu li a.is-active {
         background-color: #a2d1e0; color: #fff;
     }
@@ -1347,6 +1371,12 @@ footer .col-md-12 > span > span a:hover {
         float: none;
         display: block;
     }
+    footer .col-md-12 .long-address > span {
+        display: block;
+        margin: 8px 0 0 0;
+        clear: both;
+        float: left;
+    }
 }
 @media (min-width: 626px) and (max-width: 767px) {
 
@@ -1369,7 +1399,7 @@ footer .col-md-12 > span > span a:hover {
     .social-icons {
         float: none;
     }
-    header h1.brand a {
+    header .brand {
         font-size: 35px;
         display: inline-block;
         float: left;
@@ -1414,11 +1444,6 @@ footer .col-md-12 > span > span a:hover {
     }
     footer a.footer-logo {
         float: none;
-    }
-    footer .col-md-12 > span > span {
-        display: block;
-        margin: 8px 0 0 0;
-        font-size: 12px;
     }
     .footer .border-top {
         padding-top: 35px;

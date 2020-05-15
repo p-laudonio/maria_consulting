@@ -61,23 +61,27 @@
 
 {# Main #}
 {% block main %}
-  <div role="main" class="main-container {{ container }} js-quickedit-main-content {{ page_name }}">
-      {% if page.header_image %}
+  <div role="main" class="main-container {{ container }} js-quickedit-main-content page-contacts">
+
       <div class="row">
-          <section class="col-sm-12">
-              <div class="region region-content header-image">
-                  {{ page.header_image }}
-              </div>
-          </section>
+          {# Highlighted #}
+          {% if page.highlighted %}
+              {% block highlighted %}
+                  <div class="highlighted">{{ page.highlighted }}</div>
+              {% endblock %}
+          {% endif %}
+          {# Help #}
+          {% if page.help %}
+              {% block help %}
+                  {{ page.help }}
+              {% endblock %}
+          {% endif %}
       </div>
-      {% endif %}
 
     <div class="row">
-      {% if page.header_image %}
-      <div class="border-bottom"></div>
-      {% endif %}
+
       {# Header #}
-      {% if page.header and not is_front %}
+      {% if page.header %}
         {% block header %}
           <div class="col-sm-12" role="heading">
             {{ page.header }}
@@ -85,68 +89,47 @@
         {% endblock %}
       {% endif %}
 
-      {# Sidebar First #}
-      {% if page.sidebar_first %}
-        {% block sidebar_first %}
-          <aside class="col-sm-4" role="complementary">
-            {{ page.sidebar_first }}
-          </aside>
-        {% endblock %}
-      {% endif %}
+
+        {# Sidebar First #}
+        {% if page.sidebar_first %}
+            {% block sidebar_first %}
+                <aside class="col-sm-5" role="complementary">
+                    {{ page.sidebar_first }}
+                </aside>
+            {% endblock %}
+        {% endif %}
 
       {# Content #}
       {%
         set content_classes = [
-          page.sidebar_first and page.sidebar_second ? 'col-sm-4',
-          page.sidebar_first and page.sidebar_second is empty ? 'col-sm-8',
-          page.sidebar_second and page.sidebar_first is empty ? 'col-sm-8',
-          page.sidebar_first is empty and page.sidebar_second is empty ? 'col-sm-12'
-        ]
+          page.sidebar_first ? 'col-sm-7',
+          page.sidebar_first is empty ? 'col-sm-12'
+      ]
       %}
       <section{{ content_attributes.addClass(content_classes) }}>
+          {# Breadcrumbs #}
+          {% if breadcrumb %}
+              {% block breadcrumb %}
+                  {{ breadcrumb }}
+              {% endblock %}
+          {% endif %}
 
-        {# Highlighted #}
-        {% if page.highlighted %}
-          {% block highlighted %}
-            <div class="highlighted">{{ page.highlighted }}</div>
+          {# Action Links #}
+          {% if action_links %}
+              {% block action_links %}
+                  <ul class="action-links">{{ action_links }}</ul>
+              {% endblock %}
+          {% endif %}
+
+          {# Content #}
+          {% block content %}
+              <a id="main-content"></a>
+              {{ page.content }}
           {% endblock %}
-        {% endif %}
-
-        {# Action Links #}
-        {% if action_links %}
-          {% block action_links %}
-            <ul class="action-links">{{ action_links }}</ul>
-          {% endblock %}
-        {% endif %}
-
-        {# Help #}
-        {% if page.help %}
-          {% block help %}
-            {{ page.help }}
-          {% endblock %}
-        {% endif %}
-
-        {# Content #}
-        {% block content %}
-          <a id="main-content"></a>
-          {{ page.content }}
-        {% endblock %}
       </section>
 
-      {# Sidebar Second #}
-      {% if page.sidebar_second %}
-        {% block sidebar_second %}
-          <aside class="col-sm-4" role="complementary">
-            {{ page.sidebar_second }}
-          </aside>
-        {% endblock %}
-      {% endif %}
     </div>
   </div>
 {% endblock %}
-
-{% if is_front %}
-{% include directory ~ '/templates/parts/home_page.html.twig' %}
-{% endif %}
 
 {% include directory ~ '/templates/parts/footer.html.twig' %}

@@ -56,30 +56,16 @@
  * @see html.html.twig
  */
 #}
+
+{{ attach_library('maria_consulting/user') }}
+
 {% set container = theme.settings.fluid_container ? 'container-fluid' : 'container' %}
 {% include directory ~ '/templates/parts/header.html.twig' %}
 
 {# Main #}
 {% block main %}
-  <div role="main" class="main-container {{ container }} js-quickedit-main-content page-contacts">
-
-      <div class="row">
-          {# Highlighted #}
-          {% if page.highlighted %}
-              {% block highlighted %}
-                  <div class="highlighted">{{ page.highlighted }}</div>
-              {% endblock %}
-          {% endif %}
-          {# Help #}
-          {% if page.help %}
-              {% block help %}
-                  {{ page.help }}
-              {% endblock %}
-          {% endif %}
-      </div>
-
+  <div role="main" class="main-container {{ container }} js-quickedit-main-content">
     <div class="row">
-
       {# Header #}
       {% if page.header %}
         {% block header %}
@@ -88,45 +74,56 @@
           </div>
         {% endblock %}
       {% endif %}
-
-        <aside class="col-sm-5" role="complementary">
-            <div class="map">
-                <figure class="img-polaroid"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2484.215442850825!2d-0.08462953443586274!3d51.4909138197297!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4876036629405525%3A0x2f324c63e1c6a15d!2sLondon%20SE17%201SX!5e0!3m2!1sen!2suk!4v1587213122200!5m2!1sen!2suk" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe></figure>
-            </div>
-        </aside>
-
+    <article {{ user_attributes.addClass(['user-full-view', 'clearfix']) }}>
       {# Content #}
       {%
-        set content_classes = ['col-sm-3']
+        set content_classes = ['col-sm-7']
       %}
       <section{{ content_attributes.addClass(content_classes) }}>
 
-          {# Breadcrumbs #}
-          {% if breadcrumb %}
-              {% block breadcrumb %}
-                  {{ breadcrumb }}
-              {% endblock %}
-          {% endif %}
-
-          {# Action Links #}
-          {% if action_links %}
-              {% block action_links %}
-                  <ul class="action-links">{{ action_links }}</ul>
-              {% endblock %}
-          {% endif %}
-
-          {# Content #}
-          {% block content %}
-              <a id="main-content"></a>
-              {{ page.content }}
+        {# Highlighted #}
+        {% if page.highlighted %}
+          {% block highlighted %}
+            <div class="highlighted">{{ page.highlighted }}</div>
           {% endblock %}
+        {% endif %}
+
+        {# Breadcrumbs #}
+        {% if breadcrumb %}
+          {% block breadcrumb %}
+            {{ breadcrumb }}
+          {% endblock %}
+        {% endif %}
+
+        {# Action Links #}
+        {% if action_links %}
+          {% block action_links %}
+            <ul class="action-links">{{ action_links }}</ul>
+          {% endblock %}
+        {% endif %}
+
+        {# Help #}
+        {% if page.help %}
+          {% block help %}
+            {{ page.help }}
+          {% endblock %}
+        {% endif %}
+
+        {# Content #}
+        {% block content %}
+            <a id="main-content"></a>
+            {{ page.content }}
+        {% endblock %}
       </section>
 
-      <aside class="col-sm-4" role="complementary">
-          <h2>Get in Touch</h2>
-          {{ node_webform }}
+      <aside class="col-sm-5" role="complementary">
+          <section id="block-specialinfo" class="contextual-region block block-block-content clearfix">
+              <h2 class="block-title">{{ page.user_first_name }} {{ page.user_last_name }}</h2>
+              {{ page.user_right_body }}
+          </section>
+          {{ page.sidebar_second }}
       </aside>
-
+    </article>
     </div>
   </div>
 {% endblock %}

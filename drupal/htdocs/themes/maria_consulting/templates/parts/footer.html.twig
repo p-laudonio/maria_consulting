@@ -6,16 +6,48 @@
                     <div class="col-md-12">
                         <div class="border-top"></div>
                         {% if is_front %}
-                        <div class="social-icons">
-                            <span>Stay Connected</span>
-                            <ul>
-                                <li><a href="https://twitter.com/plaudonio" class="icon-1"></a></li>
-                                <li><a href="https://www.facebook.com/plaudonio" class="icon-2"></a></li>
-                                <li><a href="https://www.linkedin.com/in/pasquale-laudonio-14243620/" class="icon-linked-in"></a></li>
-                            </ul>
-                        </div>
+                            <div itemscope itemtype="http://schema.org/Organization">
+                                <meta itemprop="name" content="Maria Consulting LTD"/>
+                                <meta itemprop="description" content="Senior Freelance Developer in London with 25 years experience in IT industry with great knowledge of LAMP (Linux Apache MySQL PHP), Drupal 7 and 8."/>
+                                <meta itemprop="slogan" content=" Drupal 8 Consultancy and Freelance Services in London"/>
+                                <meta itemprop="knowsAbout" content="Drupal 8, custom CMS"/>
+                                <meta itemprop="legalName" content="08630093"/>
+                                <meta itemprop="vatID" content="292838559"/>
+                                <meta itemprop="founder" content="Pasquale Laudonio"/>
+                                <meta itemprop="foundingDate" content="2013-07-30"/>
+                                <meta itemprop="foundingLocation" content="London, UK"/>
+                                <link itemprop="url" href="http://maria-consulting.co.uk/"/>
+                                <link itemprop="logo" href="http://maria-consulting.co.uk/logo.png"/>
+                                <div class="social-icons">
+                                    <span>Stay Connected</span>
+                                    <ul>
+                                        <li><a itemprop="sameAs" href="https://twitter.com/plaudonio"
+                                               class="icon-1"></a></li>
+                                        <li><a itemprop="sameAs" href="https://www.facebook.com/plaudonio"
+                                               class="icon-2"></a></li>
+                                        <li><a itemprop="sameAs"
+                                               href="https://www.linkedin.com/in/pasquale-laudonio-14243620/"
+                                               class="icon-linked-in"></a></li>
+                                    </ul>
+                                </div>
+                                <div class="long-address"><a class="footer-logo"><span>maria</span>consulting</a>
+                                    <span itemprop="address" itemscope
+                                          itemtype="http://schema.org/PostalAddress">&copy; 2020, <span
+                                                itemprop="streetAddress">1 Chelsfield House, Congreve Street</span>, <span
+                                                itemprop="addressLocality">London UK</span> <span
+                                                itemprop="postalCode">SE17 1SX</span> | <a
+                                                href="/privacy-policy"
+                                                rel="noindex, nofollow">Privacy Policy</a><br/>
+                            </span>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="long-address">
+                                <a class="footer-logo"><span>maria</span>consulting</a><span>&copy; 2020, 1 Chelsfield House, Congreve Street, London SE17 1SX | <a
+                                            href="/privacy-policy"
+                                            rel="noindex, nofollow">Privacy Policy</a><br/></span>
+                            </div>
                         {% endif %}
-                        <span><a class="footer-logo"><span>maria</span>consulting</a><span>&copy; 2020, Flat 1, Chelsfield House, Congreve Street, London SE17 1SX | <a href="/privacy-policy" rel="noindex, nofollow">Privacy Policy</a><br/></span></span>
                     </div>
                 </div>
             </div>

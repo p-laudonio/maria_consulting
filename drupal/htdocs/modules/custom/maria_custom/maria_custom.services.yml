@@ -2,3 +2,8 @@ services:
   maria_custom.service:
     class: '\Drupal\maria_custom\MariaCustomService'
     arguments: ['@entity_type.manager', '@entity_field.manager', '@database', '@config.factory', '@logger.factory', '@date.formatter', '@messenger', '@session', '@user.data', '@current_user']
+  maria_custom.breadcrumb:
+    class: 'Drupal\maria_custom\Breadcrumb\mariaBreadcrumbBuilder'
+    arguments: ['@router.request_context', '@access_manager', '@router', '@path_processor_manager', '@config.factory',  '@title_resolver', '@current_user', '@path.current', '@path.matcher', '@maria_custom.service']
+    tags:
+      - { name: breadcrumb_builder, priority: 1005 }

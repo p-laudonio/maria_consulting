@@ -7,6 +7,7 @@
 namespace Drupal\maria_consulting\Plugin\Alter;
 
 use Drupal\bootstrap\Plugin\Alter\ThemeSuggestions;
+use Drupal\node\Entity\Node;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -98,8 +99,20 @@ class MariaThemeSuggestions extends ThemeSuggestions implements ContainerFactory
           $vocabularyId = $taxonomy->getVocabularyId();
           $suggestions[] = $variables['theme_hook_original'] . '__taxonomy__term__' . $vocabularyId;
         }
+        else {
+          $suggestions[] = $variables['theme_hook_original'] . '__' . $view->id() . '__display__' . $view->current_display;
+        }
+
       }
 
+    }
+
+    elseif ($hook == 'search_result') {
+      /** @var Node $node */
+      $node = !empty($variables['result']['node']) ? $variables['result']['node'] : false;
+      if ($node) {
+        $suggestions[] = $variables['theme_hook_original'] . '__node__' . $node->bundle();
+      }
     }
 
     parent::alter($suggestions, $variables, $hook);

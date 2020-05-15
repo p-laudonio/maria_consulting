@@ -124,13 +124,16 @@ class MoreServiceBlock extends BlockBase implements ContainerFactoryPluginInterf
 
     // For Node Service we get the TIDs from field_tags and NIDs from field_more_services.
     elseif ($node = $this->route_match->getParameter('node')) {
-
-      $content_type = $node->bundle();
       $nid = $node->id();
-      if ($content_type == "service" && isset($node->field_tags)) {
+      if ($node->hasField('field_more_services')) {
 
-        $field_tags = $node->get('field_tags');
-        $my_tags_list = $field_tags->getValue();
+        if ($node->hasField('field_tags')) {
+          $field_tags = $node->get('field_tags');
+          $my_tags_list = $field_tags->getValue();
+        }
+        else {
+          $my_tags_list = [];
+        }
 
         $my_tids = array();
         foreach ($my_tags_list as $term) {
@@ -252,13 +255,18 @@ class MoreServiceBlock extends BlockBase implements ContainerFactoryPluginInterf
     $special_services = [];
 
     // If this Service does not have any related nids just take them randomly.
-    if (empty($special_service_nids)) {
-      $special_service_nids = $this->getSpecialServicesNIDs();
+    if (count($special_service_nids) < $max) {
+      $default_special_service_nids = $this->getSpecialServicesNIDs();
       if ($exclude_nid) {
-        $special_service_nids = array_diff($special_service_nids, [$exclude_nid]);
+        $default_special_service_nids = array_diff($default_special_service_nids, [$exclude_nid]);
       }
       // Randomise the order:
-      shuffle($special_service_nids);
+      shuffle($default_special_service_nids);
+
+      $num_to_add = $max - count($special_service_nids);
+      for ($i = 0; $i < $num_to_add; $i++) {
+        $special_service_nids[] = $default_special_service_nids[$i];
+      }
     }
 
     if ($max < 5) {

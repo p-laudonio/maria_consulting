@@ -56,6 +56,8 @@
  * @see html.html.twig
  */
 #}
+{{ attach_library('maria_consulting/service') }}
+
 {% set container = theme.settings.fluid_container ? 'container-fluid' : 'container' %}
 {% include directory ~ '/templates/parts/header.html.twig' %}
 
@@ -63,35 +65,15 @@
 {% block main %}
   <div role="main" class="main-container {{ container }} js-quickedit-main-content {{ page_name }}">
       {% if page.service_image %}
-      <div class="row">
-          <section class="col-sm-12">
-              <div class="region region-content">
-                  <div class="views-element-container contextual-region form-group">
-                      <div class="contextual-region view view-flexslider-views-example view-id-flexslider_views_example view-display-id-home_slider_page">
-                          <div class="view-content">
-                              <div>
-                                  <div id="flexslider-1"
-                                       class="flexslider optionset-flexslider-default-slider-w-thumbnail-slider">
-                                      <div class="flex-viewport" style="overflow: hidden; position: relative;">
-                                          <ul class="slides">
-                                              <li class="flex-active-slide">
-                                                <div class="field-content">
-                                                   <h1>{{ page.service_page_title }}</h1>
-                                                   {{ page.service_image }}
-                                                </div>
-                                              </li>
-                                          </ul>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
+          <div class="row">
+              <section class="col-sm-12">
+                  <div class="region region-content header-image{{ page.service_title_position }}">
+                      <h1>{{ page.service_page_title }}</h1>
+                      {{ page.service_image }}
                   </div>
-              </div>
-          </section>
-      </div>
+              </section>
+          </div>
       {% endif %}
-
 
     <div class="row">
       {% if page.service_image %}
