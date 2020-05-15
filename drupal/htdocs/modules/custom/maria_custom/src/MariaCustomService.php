@@ -19,12 +19,21 @@ use Drupal\Core\Render\Markup;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\user\UserData;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
+use Drupal\Core\Link;
 use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
+use Drupal\menu_link_content\Plugin\Menu\MenuLinkContent;
 
 class MariaCustomService
 {
+  /**
+   * The menu link manager interface.
+   *
+   * @var \Drupal\Core\Menu\MenuLinkManagerInterface
+   */
+  protected $menuLinkManager;
 
   /**
    * Entity type manager.
@@ -512,6 +521,60 @@ class MariaCustomService
   {
     $output = Markup::create($message);
     $this->messengerService->addMessage($output);
+  }
+
+  /**
+   * Return the entire menu trail from the current menu item.
+   * @param ContentEntityInterface $contentEntity
+   *
+   * @return bool|MenuLinkContent $content_link
+   */
+  public function getMenuLinkContent(ContentEntityInterface $contentEntity) {
+    $this->menuLinkManager = \Drupal::service('plugin.manager.menu.link');
+    $menu_name = 'main';
+    $content_link = false;
+    $url = $contentEntity->toUrl();
+    $route_links = $this->menuLinkManager->loadLinksByRoute($url->getRouteName(), $url->getRouteParameters(), $menu_name);
+    if (!empty($route_links)) {
+      /** @var MenuLinkContent $content_link */
+      $content_link = reset($route_links);
+    }
+    return $content_link;
+  }
+
+  /**
+   * Return the entire menu trail from the current menu item.
+   * @param MenuLinkContent $content_link
+   *
+   * @return array $links
+   */
+  public function getMenuLinkTrail(MenuLinkContent $content_link) {
+    $this->menuLinkManager = \Drupal::service('plugin.manager.menu.link');
+    $links = [];
+
+    $link_plugin_id = $content_link->getPluginId();
+    $menuTrail = $this->menuLinkManager->getParentIds($link_plugin_id);
+
+    // Generate basic breadcrumb trail from active trail.
+    // Keep same link ordering as Menu Breadcrumb (so also reverses menu trail)
+    foreach (array_reverse($menuTrail) as $id) {
+      $plugin = $this->menuLinkManager->createInstance($id);
+
+      // Skip items that have an empty URL if the option is set.
+      if (empty($plugin->getUrlObject()->toString())) {
+        continue;
+      }
+
+      $link = Link::fromTextAndUrl($plugin->getTitle(), $plugin->getUrlObject());
+      $links[] = $link;
+
+      // Stop items when the first url matching occurs.
+      if ($plugin->getUrlObject()->toString() == Url::fromRoute('<current>')->toString()) {
+        break;
+      }
+
+    }
+    return $links;
   }
 
 }

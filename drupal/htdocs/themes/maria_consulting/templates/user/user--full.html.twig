@@ -1,0 +1,103 @@
+{#
+/**
+ * @file
+ * Default theme implementation to present all user data.
+ *
+ * This template is used when viewing a registered user's page,
+ * e.g., example.com/user/123. 123 being the user's ID.
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ *   print a subset such as 'content.field_example'. Fields attached to a user
+ *   such as 'user_picture' are available as 'content.user_picture'.
+ * - attributes: HTML attributes for the container element.
+ * - user: A Drupal User entity.
+ *
+ * @see template_preprocess_user()
+ *
+ * @ingroup themeable
+ */
+#}
+<span property="schema:gender" content="male" class="hidden"></span>
+<span property="schema:birthPlace" content="Benevento, ITA" class="hidden"></span>
+{% if content.field_body %}
+    {%- for key, field_body_item in content.field_body['#items'] -%}
+        {%- if key == 0 -%}
+            <div class="block-3 clearfix">
+                <figure class="img-polaroid">
+                    {{- content.user_picture -}}
+                </figure>
+                <div class="field--item">
+                    {{- content.field_body[key] -}}
+                </div>
+            </div>
+            <div class="block-3 personal-details clearfix">
+                <div class="col-sm-12 col-md-6">
+                    <div class="field field--label-inline">
+                        <div class="field--label">{{- content.field_first_name|field_label -}}</div>
+                        <div property="schema:givenName"
+                             class="field--item">{{- content.field_first_name|field_value -}}</div>
+                    </div>
+                    <div class="field field--label-inline">
+                        <div class="field--label">{{- content.field_last_name|field_label -}}</div>
+                        <div property="schema:familyName"
+                             class="field--item">{{- content.field_last_name|field_value -}}</div>
+                    </div>
+                    <div class="field field--label-inline">
+                        <div class="field--label">Nationality</div>
+                        <div property="schema:nationality" class="field--item">Italian</div>
+                    </div>
+                    <div class="field field--label-inline">
+                        <div class="field--label">{{- content.field_job_title|field_label -}}</div>
+                        <div property="schema:jobTitle"
+                             class="field--item">{{- content.field_job_title|field_value -}}</div>
+                    </div>
+                    <div class="field field--label-inline">
+                        <div class="field--label">View Portfolio</div>
+                        <div class="field--item"><a href="/projects" property="schema:url" itemprop="url">My Portfolio</a></div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6">
+                    <div class="field field--label-inline">
+                        <div class="field--label">{{- content.field_telephone|field_label -}}</div>
+                        <div property="schema:telephone"
+                             class="field--item">{{- content.field_telephone|field_value -}}</div>
+                    </div>
+                    <div class="field field--label-inline">
+                        <div class="field--label">Work for</div>
+                        <div property="schema:worksFor">
+                            <span property="schema:name" typeof="schema:Organization"
+                                  about="{{- content.field_web_site[0]['#url'] -}}">{{- content.field_web_site[0]['#title'] -}}</span>
+                        </div>
+                        <div about="{{- content.field_web_site[0]['#url'] -}}">
+                            <span property="schema:address" class="field PostalAddress"
+                                  typeof="schema:PostalAddress">
+                                <span property="schema:streetAddress">1 Chelsfield House</span>,
+                                <span property="schema:addressLocality">London UK</span>
+                                <span property="schema:postalCode">SE17 1SX</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="field" property="schema:alumniOf" typeof="schema:OrganizationRole">
+                        <span property="schema:alumniOf" typeof="schema:CollegeOrUniversity">
+                            Computer Science Degree at <span property="schema:name">University of Sannio</span>
+                            <link property="schema:sameAs" href="https://en.wikipedia.org/wiki/University_of_Sannio">
+                        </span> from <span property="schema:startDate">1995</span> to <span property="schema:startDate">2001</span>
+                    </div>
+
+                    <div class="field field--label-inline">
+                        <div class="field--label">{{- content.field_web_site|field_label -}}</div>
+                        <div class="field--item">
+                            <a href="{{- content.field_web_site[0]['#url'] -}}">{{- content.field_web_site[0]['#url'] -}}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {%- else -%}
+            <div class="field--item">
+                {{- content.field_body[key] -}}
+            </div>
+        {%- endif -%}
+    {%- endfor -%}
+{% endif %}

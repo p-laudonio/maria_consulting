@@ -10,3 +10,7 @@ service:
   css:
     theme:
       css/service.css: {}
+user:
+  css:
+    theme:
+      css/user.css: {}

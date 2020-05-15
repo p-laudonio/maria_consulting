@@ -1,0 +1,48 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a view of unformatted rows.
+ *
+ * Available variables:
+ * - title: The title of this group of rows. May be empty.
+ * - rows: A list of the view's row items.
+ *   - attributes: The row's HTML attributes.
+ *   - content: The row's content.
+ * - view: The view object.
+ * - default_row_class: A flag indicating whether default classes should be
+ *   used on rows.
+ *
+ * @see template_preprocess_views_view_unformatted()
+ *
+ * @ingroup themeable
+ */
+#}
+{% if title %}
+  <h3>{{ title }}</h3>
+{% endif %}
+{% for row in rows %}
+  {%
+    set row_classes = [
+      default_row_class ? 'views-row',
+    ]
+  %}
+  <div{{ row.attributes.addClass(row_classes) }}>
+    {% if row.full_name %}
+    <div class="organization-role" property="schema:alumniOf" typeof="schema:OrganizationRole">
+      <span property="schema:alumniOf" typeof="schema:Organization">
+          <span class="company-name" property="schema:name">{{ row.company_details.company }}</span>
+          <span property="schema:address" typeof="schema:PostalAddress">
+          <span property="schema:streetAddress">{{ row.company_details.address }}</span>
+          <span property="schema:addressLocality">{{ row.company_details.city }}</span>
+          <span property="schema:postalCode">{{ row.company_details.post_code }}</span>
+          </span>
+      </span>
+      <span class="job-period">
+      From <span property="schema:startDate">{{ row.company_details.start }}</span>
+      to <span property="schema:startDate">{{ row.company_details.end }}</span>
+      </span>
+    </div>
+    {% endif %}
+    {{- row.content -}}
+  </div>
+{% endfor %}

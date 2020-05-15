@@ -457,6 +457,9 @@ header .navbar-default{
         right: 5px;
         bottom: 8px;
     }
+    .path-taxonomy-tags .region-navigation-collapsible nav ul.menu > li.services > a:after,
+    .page-node-type-service .region-navigation-collapsible nav ul.menu > li.services > a:after,
+    .page-node-type-project .region-navigation-collapsible nav ul.menu > li.projects > a:after,
     .region-navigation-collapsible nav ul.menu > li.sfHover > a:after,
     .region-navigation-collapsible nav ul.menu > li.active > a:after,
     .region-navigation-collapsible nav ul.menu > li:hover > a:after {
@@ -470,6 +473,12 @@ header .navbar-default{
         top: -59px;
     }
 
+    .path-taxonomy-tags .region-navigation-collapsible nav ul.menu > li.services > a,
+    .path-taxonomy-tags .region-navigation-collapsible nav ul.menu > li.services > a:hover,
+    .page-node-type-service .region-navigation-collapsible nav ul.menu > li.services > a,
+    .page-node-type-service .region-navigation-collapsible nav ul.menu > li.services > a:hover,
+    .page-node-type-project .region-navigation-collapsible nav ul.menu > li.projects > a,
+    .page-node-type-project .region-navigation-collapsible nav ul.menu > li.projects > a:hover,
     .region-navigation-collapsible nav ul.menu > li.sfHover > a,
     .region-navigation-collapsible nav ul.menu > li.sfHover > a:hover,
     .region-navigation-collapsible nav ul.menu > li > a:hover,
@@ -486,6 +495,12 @@ header .navbar-default{
         -o-transition: 0.3s;
         transition: 0.3s;
     }
+    .path-taxonomy-tags .region-navigation-collapsible nav ul.menu > li.services > a span,
+    .path-taxonomy-tags .region-navigation-collapsible nav ul.menu > li.services > a:hover span,
+    .page-node-type-service .region-navigation-collapsible nav ul.menu > li.services > a span,
+    .page-node-type-service .region-navigation-collapsible nav ul.menu > li.services > a:hover span,
+    .page-node-type-project .region-navigation-collapsible nav ul.menu > li.projects > a span,
+    .page-node-type-project .region-navigation-collapsible nav ul.menu > li.projects > a:hover span,
     .region-navigation-collapsible nav ul.menu > li.sfHover > a span,
     .region-navigation-collapsible nav ul.menu > li.sfHover > a:hover span,
     .region-navigation-collapsible nav ul.menu > li > a:hover span,
@@ -1226,6 +1241,9 @@ footer .col-md-12 .long-address > span a:hover {
     .region-navigation-collapsible nav ul > li a {
         font-weight: normal;
     }
+    .path-taxonomy-tags .region-navigation-collapsible nav ul.menu > li.services > a:after,
+    .page-node-type-service .region-navigation-collapsible nav ul.menu > li.services > a:after,
+    .page-node-type-project .region-navigation-collapsible nav ul.menu > li.projects > a:after,
     .region-navigation-collapsible nav ul > li.sfHover > a:after,
     .region-navigation-collapsible nav ul > li.active > a:after,
     .region-navigation-collapsible nav ul > li:hover > a:after {
@@ -1304,6 +1322,9 @@ footer .col-md-12 .long-address > span a:hover {
     .region-navigation-collapsible nav ul.menu li.last a {
         border-width: 0;
     }
+    .path-taxonomy-tags .region-navigation-collapsible nav ul.menu > li.services > a,
+    .page-node-type-service .region-navigation-collapsible nav ul.menu > li.services > a,
+    .page-node-type-project .region-navigation-collapsible nav ul.menu > li.projects > a,
     .region-navigation-collapsible nav ul.menu li a:hover, .region-navigation-collapsible nav ul.menu li a.is-active {
         background-color: #a2d1e0; color: #fff;
     }

@@ -1,0 +1,64 @@
+
+.user-full-view {
+
+}
+
+ul.list.skills {
+    margin-left: 0;
+    padding-left: 0;
+    font-size: 1em;
+}
+
+ul.list.skills li {
+    font-size: 1em;
+}
+
+.user-full-view .lists ul {
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.block-3.personal-details {
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+.block-3.personal-details .field {
+    padding-top: 10px;
+}
+
+#block-specialinfo h2 > span {
+    color: #545454;
+    font-size: 30px;
+}
+
+#block-specialinfo .border-bottom {
+    padding-top: 10px;
+}
+
+.user-full-view aside section:first-child h2:first-child {
+    margin-top: 0;
+}
+
+.user-full-view aside .region-sidebar-second-user section.block-views h2,
+.user-full-view aside h2 {
+    margin-top: 30px;
+}
+
+/*work-experience*/
+.view-my-work-experience .organization-role {
+    border-top: #ebebeb 1px solid;
+    text-align: right;
+    padding: 20px 0 5px 0;
+}
+
+.view-my-work-experience .organization-role .company-name {
+    font-weight: bold;
+}
+
+.view-my-work-experience .organization-role .job-period {
+    display: block;
+}
+
+.view-my-work-experience .organization-role .job-period span {
+    font-weight: bold;
+}

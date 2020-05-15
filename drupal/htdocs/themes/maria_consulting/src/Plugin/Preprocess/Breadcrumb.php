@@ -6,11 +6,12 @@
 
 namespace Drupal\maria_consulting\Plugin\Preprocess;
 
-use Drupal\bootstrap\Annotation\BootstrapPreprocess;
 use Drupal\bootstrap\Utility\Variables;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
-use Drupal\maria_consulting\MariaConsulting;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Pre-processes variables for the "breadcrumb" theme hook.
@@ -19,30 +20,67 @@ use Drupal\maria_consulting\MariaConsulting;
  *
  * @BootstrapPreprocess("breadcrumb")
  */
-class Breadcrumb extends \Drupal\bootstrap\Plugin\Preprocess\Breadcrumb
+class Breadcrumb extends \Drupal\bootstrap\Plugin\Preprocess\Breadcrumb implements ContainerFactoryPluginInterface
 {
+
+  /**
+   * Current Route Match.
+   *
+   * @var RouteMatchInterface
+   */
+  protected $route_match;
+
+  /**
+   * Creates a ItemList instance.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $route_match)
+  {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->route_match = $route_match;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition)
+  {
+    /** @var RouteMatchInterface $route_match */
+    $route_match = $container->get('current_route_match');
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $route_match
+    );
+  }
 
   /**
    * {@inheritdoc}
    */
   public function preprocessVariables(Variables $variables)
   {
-    // Add custom breadcrumb for wide Service pages:
-    if ($node = \Drupal::routeMatch()->getParameter('node')) {
-      $content_type = $node->bundle();
-      if ($content_type == "service" && isset($node->field_tags)) {
-        $field_tags = $node->get('field_tags');
-        $iterator = $field_tags->getIterator();
-        if ($iterator->offsetExists(0)) {
-          $first_tag = $iterator->offsetGet(0);
-          $my_view = $first_tag->view();
-          $variables['breadcrumb'][] = array(
-            'text' => render($my_view)
-          );
+    parent::preprocessVariables($variables);
+
+    if (!empty($variables['breadcrumb'])) {
+      $current_url = Url::fromRoute('<current>')->toString();
+      foreach ($variables['breadcrumb'] as $index => $item) {
+        $item_url = $variables['breadcrumb'][$index]['url'];
+        if ($item_url == $current_url) {
+          $variables['breadcrumb'][$index] = [
+            'text' => $variables['breadcrumb'][$index]['text'],
+            'url' => false,
+            'attributes' => new Attribute(['class' => ['active']]),
+          ];
         }
       }
     }
-    parent::preprocessVariables($variables);
-  }
 
+  }
 }

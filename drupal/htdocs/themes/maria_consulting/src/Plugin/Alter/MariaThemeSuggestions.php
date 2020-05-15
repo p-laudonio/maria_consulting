@@ -99,6 +99,10 @@ class MariaThemeSuggestions extends ThemeSuggestions implements ContainerFactory
           $vocabularyId = $taxonomy->getVocabularyId();
           $suggestions[] = $variables['theme_hook_original'] . '__taxonomy__term__' . $vocabularyId;
         }
+        else {
+          $suggestions[] = $variables['theme_hook_original'] . '__' . $view->id() . '__display__' . $view->current_display;
+        }
+
       }
 
     }
