@@ -14,6 +14,7 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\field\Entity\FieldConfig;
+use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -279,18 +280,7 @@ class MariaCustomService
       $title_parts = explode(' ', $image_data['title']);
       $caption = $title_parts[0];
 
-      $description = '';
-      if ($node->bundle() == 'service' && $node->hasField('field_image_text_preview')) {
-        $description = $node->field_image_text_preview->value;
-      }
-
-      if (empty($description) && $node->hasField('field_teaser')) {
-        $description = $this->getFirstWords(strip_tags($node->field_teaser->value), 137);
-      }
-
-      if (empty($description) && $node->hasField('body')) {
-        $description = $this->getFirstWords(strip_tags($node->body->value), 137);
-      }
+      $description = $this->getTeaserDescription($node);
 
       $service_item = array(
         "nid" => $nid,
@@ -309,13 +299,40 @@ class MariaCustomService
   }
 
   /**
+   * Return the teaser description.
+   * @param ContentEntityInterface $contentEntity
+   *
+   * @return string $description
+   */
+  public function getTeaserDescription(ContentEntityInterface $contentEntity)
+  {
+    $description = '';
+    $type_id = $contentEntity->getEntityTypeId();
+    if ($type_id == 'node') {
+      if ($contentEntity->bundle() == 'service' && $contentEntity->hasField('field_image_text_preview')) {
+        $description = $contentEntity->field_image_text_preview->value;
+      }
+
+      if (empty($description) && $contentEntity->hasField('field_teaser')) {
+        $description = $this->getFirstWords(strip_tags($contentEntity->field_teaser->value), 137);
+      }
+
+      if (empty($description) && $contentEntity->hasField('body')) {
+        $description = $this->getFirstWords(strip_tags($contentEntity->body->value), 137);
+      }
+    }
+
+    return $description;
+  }
+
+  /**
    * Return the data from a field Image.
    * @param ContentEntityInterface $contentEntity
-   * @param string $field_name
+   * @param array $image_info_default
    *
    * @return array|bool $image_data
    */
-  public function getImageData(ContentEntityInterface $contentEntity)
+  public function getImageData(ContentEntityInterface $contentEntity, $image_info_default = [])
   {
     $image_data = [
       'url' => '/themes/maria_consulting/img/image-blank.png',
@@ -324,7 +341,13 @@ class MariaCustomService
       'found' => false,
     ];
 
-    $image_info = $this->getFieldImageInfo($contentEntity);
+    if (count($image_info_default) < 2) {
+      $image_info = $this->getFieldImageInfo($contentEntity);
+    }
+    else {
+      $image_info = $image_info_default;
+    }
+
     if (count($image_info) == 2) {
       list($field_name, $image_style) = $image_info;
     }
@@ -354,9 +377,17 @@ class MariaCustomService
         $file = $this->fileStorage->load($value['target_id']);
 
         $image_uri = $file->getFileUri();
-        /** @var ImageStyle $image_style */
-        $image_style = $this->imageStyleStorage->load($image_style);
-        $image_data['url'] = $image_style->buildUrl($image_uri);
+
+        if ($image_style == 'original') {
+          $image_url = file_create_url($image_uri);
+        }
+        else {
+          /** @var ImageStyle $image_style */
+          $image_style = $this->imageStyleStorage->load($image_style);
+          $image_url = $image_style->buildUrl($image_uri);
+        }
+
+        $image_data['url'] = $image_url;
         $image_data['found'] = true;
       }
 
@@ -367,6 +398,42 @@ class MariaCustomService
     }
 
     return $image_data;
+  }
+
+  /**
+   * Return the created date.
+   * @param ContentEntityInterface $contentEntity
+   *
+   * @return string $created_date
+   */
+  public function getDateCreated(ContentEntityInterface $contentEntity)
+  {
+    $created_date = '';
+    $type_id = $contentEntity->getEntityTypeId();
+    if ($type_id == 'node') {
+      $time = $contentEntity->getCreatedTime();
+      $created_date = date('Y-m-d', $time);
+    }
+
+    return $created_date;
+  }
+
+  /**
+   * Return the created date.
+   * @param ContentEntityInterface $contentEntity
+   *
+   * @return string $modified_date
+   */
+  public function getDateModified(ContentEntityInterface $contentEntity)
+  {
+    $modified_date = '';
+    $type_id = $contentEntity->getEntityTypeId();
+    if ($type_id == 'node') {
+      $time = $contentEntity->getChangedTime();
+      $modified_date = date('Y-m-d', $time);
+    }
+
+    return $modified_date;
   }
 
   /**
@@ -391,6 +458,119 @@ class MariaCustomService
       $result = $s;
     }
     return $result;
+  }
+
+  /**
+   * Helper function to extract company information from a string.
+   * @param ContentEntityInterface $node
+   *
+   * @return array $company_details
+   */
+  public function getCompanydetails(ContentEntityInterface $node)
+  {
+    if ($node->hasField('field_company_details')) {
+      $values = explode(',', $node->field_company_details->value);
+    }
+    else {
+      $values = [];
+    }
+
+    if ($node->hasField('field_job_title')) {
+      $job_title = $node->field_job_title->value;
+    }
+    else {
+      $job_title = false;
+    }
+
+    $periods = $node->hasField('field_period') ? $node->field_period->getValue() : [];
+    if (!empty($periods)) {
+      $start = $periods[0]['value'];
+      $end = $periods[0]['end_value'];
+    }
+    else {
+      $start = false;
+      $end = false;
+    }
+
+    // In all our Nodes the field_company_details always contains: "company,address,city,post code".
+    if (count($values) > 3) {
+      list($company, $address, $city, $post_code) = $values;
+      $company_details = [
+        'company_url' => $node->toUrl()->toString(),
+        'company' => $company,
+        'address' => $address,
+        'city' => $city,
+        'post_code' => $post_code,
+        'job_title' => $job_title,
+        'start' => $start,
+        'end' => $end,
+      ];
+    }
+    else {
+      $company_details = [
+        'company_url' => '',
+        'company' => '',
+        'address' => '',
+        'city' => '',
+        'post_code' => '',
+        'job_title' => $job_title,
+        'start' => $start,
+        'end' => $end,
+      ];
+    }
+
+    return $company_details;
+  }
+
+  /**
+   * Helper function to determine to which RDF schema Type the Entity Belongs to.
+   * @param ContentEntityInterface $contentEntity
+   *
+   * @return string $rdf_type
+   */
+  public function getRdfType(ContentEntityInterface $contentEntity)
+  {
+    $rdf_type = "Article";
+
+    if($accordion = $this->getFirstReferencedEntity($contentEntity, 'field_accordion')) {
+      $panel_title = $accordion->hasField('field_panel_title') ? $accordion->field_panel_title->value : '';
+      if (substr( $panel_title, 0, 3) === "1. ") {
+        $rdf_type = "HowTo";
+      }
+    }
+    elseif (in_array($contentEntity->bundle(), ['service', 'project'])) {
+      $rdf_type = "WebPage";
+    }
+    elseif ($contentEntity->getEntityTypeId() == 'taxonomy_term') {
+      $rdf_type = "WebPage";
+    }
+    elseif ($contentEntity->bundle() == 'user') {
+      $rdf_type = "Person";
+    }
+
+    return $rdf_type;
+  }
+
+  /**
+   * Helper function to get the first referenced Entity from an entity reference field.
+   * @param ContentEntityInterface $contentEntity
+   * @param string $field_name
+   *
+   * @return ContentEntityInterface $ref_entity
+   */
+  public function getFirstReferencedEntity(ContentEntityInterface $contentEntity, $field_name)
+  {
+    $ref_entity = false;
+
+    if ($contentEntity->hasField($field_name) &&
+      $contentEntity->{$field_name} instanceof EntityReferenceFieldItemListInterface) {
+      $ref_entities = $contentEntity->{$field_name}->referencedEntities();
+      if (!empty($ref_entities)) {
+        $ref_entity = reset($ref_entities);
+      }
+    }
+
+    return $ref_entity;
   }
 
   /**

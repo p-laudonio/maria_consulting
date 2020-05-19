@@ -181,14 +181,20 @@ class mariaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     //$debug = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 15);
     $parameters = $attributes->getParameters()->all();
 
+    // Determine if the current page is a user page
+    if (isset($parameters['user']) && !empty($parameters['user'])) {
+      $this->bundle = 'user';
+      return TRUE;
+    }
+
     // Determine if the current page is a node page
-    if (isset($parameters['node']) && !empty($parameters['node'])) {
+    elseif (isset($parameters['node']) && !empty($parameters['node'])) {
       $this->node = $parameters['node'];
       $this->bundle = $this->node->bundle();
       return TRUE;
     }
 
-    // Determine if the current page is a node page
+    // Determine if the current page is a taxonomy term page
     elseif (isset($parameters['taxonomy_term']) && !empty($parameters['taxonomy_term'])) {
       $this->taxonomy_term = $parameters['taxonomy_term'];
       $this->bundle = $this->taxonomy_term->getVocabularyId();
