@@ -39,8 +39,10 @@
       </span>
       <span class="job-period">
       From <span property="schema:startDate">{{ row.company_details.start }}</span>
-      to <span property="schema:startDate">{{ row.company_details.end }}</span>
+      to <span property="schema:endDate">{{ row.company_details.end }}</span>
       </span>
+      <span property="schema:roleName" class="hidden">{{ row.company_details.job_title }}</span>
+      <span property="schema:sameAs" class="hidden">{{ row.company_details.company_url }}</span>
     </div>
     {% endif %}
     {{- row.content -}}

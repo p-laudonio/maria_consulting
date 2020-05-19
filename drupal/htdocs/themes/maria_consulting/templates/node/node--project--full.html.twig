@@ -8,7 +8,7 @@
      Only "getter" methods (method names starting with "get", "has", or "is")
      and a few common methods such as "id" and "label" are available. Calling
      other methods (such as node.delete) will result in an exception.
- * - label: The title of the node.
+ * - label: (optional) The title of the node.
  * - content: All node items. Use {{ content }} to print them all,
  *   or print a subset such as {{ content.field_example }}. Use
  *   {{ content|without('field_example') }} to temporarily suppress the printing
@@ -16,8 +16,8 @@
  * - author_picture: The node author user entity, rendered using the "compact"
  *   view mode.
  * - metadata: Metadata for this node.
- * - date: Themed creation date field.
- * - author_name: Themed author name field.
+ * - date: (optional) Themed creation date field.
+ * - author_name: (optional) Themed author name field.
  * - url: Direct URL of the current node.
  * - display_submitted: Whether submission information should be displayed.
  * - attributes: HTML attributes for the containing element.
@@ -65,48 +65,53 @@
  *   in different view modes.
  */
 #}
-{% set classes = [
+{%
+  set classes = [
     node.bundle|clean_class,
     node.isPromoted() ? 'is-promoted',
     node.isSticky() ? 'is-sticky',
     not node.isPublished() ? 'is-unpublished',
     view_mode ? view_mode|clean_class,
     'clearfix',
-] %}
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4 class="panel-title"><a data-parent="#accordion" data-toggle="collapse"
-                                   href="#node-{{ node.id() }}">{{ label }}</a></h4>
-    </div>
-    <div class="panel-collapse collapse in" id="node-{{ node.id() }}">
-        <div class="panel-body">
-            <article class="work-experience" property="schema:alumniOf" typeof="schema:Organization">
-                {{ content.field_company_details }}
-                <div class="organization-role" property="schema:member" typeof="schema:OrganizationRole">
-              <span property="schema:member" typeof="schema:Person" class="hidden">
-                  <span property="schema:name">Pasquale Laudonio</span>
-                  <span property="schema:sameAs">/company</span>
-              </span>
-                    <div class="field field--label-inline">
-                        <div class="field--label">{{ content.field_job_title|field_label }}</div>
-                        <div class="field--item">
-                            <a href="{{ url }}" content="{{ content.field_job_title|field_value }}"
-                               property="schema:roleName">{{ content.field_job_title|field_value }}</a>
-                            <span property="schema:sameAs" class="hidden">{{ url }}</span>
-                        </div>
-                    </div>
-                    <div class="field field--label-inline">
-                        <div class="field--label">{{ content.field_period|field_label }}</div>
-                        <div class="field--item">From <span
-                                    property="schema:startDate">{{ content.field_period[0]['start_date'] }}</span>
-                            To <span property="schema:endDate">{{ content.field_period[0]['end_date'] }}</span>
-                        </div>
-                    </div>
-                </div>
-                {{ content.field_technologies }}
-                {{ content.field_project_description }}
-                {{ content.field_responsibility }}
-            </article>
-        </div>
-    </div>
-</div>
+  ]
+%}
+<article{{ attributes.addClass(classes) }}>
+  <span property="schema:inLanguage" typeof="schema:Language" class="hidden">
+    <span property="schema:name">English</span>
+    <span property="schema:alternateName">en</span>
+  </span>
+  <span property="schema:datePublished" content="{{ node_date_created }}" class="hidden"></span>
+  <span property="schema:headline" class="hidden">{{ node_name }}</span>
+  <span property="schema:mainEntityOfPage" content="Drupal" class="hidden"></span>
+  <span property="schema:description" class="hidden">{{ node_description }}</span>
+  <span property="schema:publisher" typeof="schema:Organization" class="hidden">
+    <span property="schema:name">Maria Consulting LTD</span>
+    <link property="schema:url" href="http://maria-consulting.co.uk/"/>
+    <span property="schema:logo" typeof="schema:ImageObject">
+    <link property="schema:url" href="http://maria-consulting.co.uk/logo.png"/>
+    </span>
+  </span>
+  <span property="schema:author" typeof="schema:Person" class="hidden">
+  <span property="schema:name">Pasquale Laudonio</span>
+  </span>
+
+  <span property="schema:text" class="hidden">Pasquale Laudonio work experience as Drupal Developer at UBS</span>
+
+  <span property="schema:specialty" typeof="schema:Specialty" class="hidden">
+    <span property="schema:name">Drupal 8</span>
+  </span>
+  <span property="schema:audience" typeof="schema:Audience" class="hidden">
+    <span property="schema:name">Drupal</span>
+    <span property="schema:audienceType">Drupal Developer, HR, Recruiting Agency</span>
+  </span>
+  {% if work_experience %}<span property="schema:relatedLink" class="hidden">{{ work_experience.url }}</span>
+  <span property="schema:mainContentOfPage" content="{{ work_experience.title }}" class="hidden"></span>
+  <span property="schema:about" class="hidden">{{ work_experience.job_title }} Experience at {{ work_experience.company }}</span>{% endif %}
+  <span property="schema:dateCreated" content="{{ node_date_created }}" class="hidden"></span>
+  <span property="schema:dateModified" content="{{ node_date_modified }}" class="hidden"></span>
+
+  <div{{ content_attributes.addClass('content') }}>
+    {{ content }}
+  </div>
+
+</article>

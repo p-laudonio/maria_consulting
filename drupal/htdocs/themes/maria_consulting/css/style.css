@@ -178,14 +178,6 @@ figure.img-polaroid {
     -o-transition: opacity 0.2s linear;
     transition: opacity 0.2s linear;
 }
-/*accordion*/
-.view-my-work-experience .panel { border-color: #a2d1e0; margin-bottom: 20px; }
-article.work-experience .field--name-field-company-details, article.work-experience .field--name-body,
-article.work-experience .field--name-field-technologies, article.work-experience .field--name-field-project-description {
-    border-bottom: #ebebeb 1px solid;
-    margin-bottom: 10px; padding-bottom: 10px;
-}
-article.work-experience .field--name-body .field--item { padding-bottom: 10px; }
 
 /**/
 .top-0 {

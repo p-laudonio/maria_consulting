@@ -1,0 +1,34 @@
+
+.view-my-work-experience .panel {
+    border-color: #a2d1e0;
+    margin-bottom: 20px;
+}
+
+article.work-experience .organization-role,
+article.work-experience .field--name-body,
+article.work-experience .field--name-field-technologies,
+article.work-experience .field--name-field-project-description {
+    border-bottom: #ebebeb 1px solid;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+
+.region-content section.block-block-content h2,
+article.work-experience .field--name-body h2 {
+    margin: 20px 0;
+}
+
+.region-content section.block-block-content h3,
+article.work-experience .field--name-body .search-details h2,
+article.work-experience .field--name-body .search-details h3 {
+    margin-top: 0;
+}
+
+article.work-experience .field--name-body .field--item {
+    padding-bottom: 10px;
+}
+
+.region-content section.block-block-content {
+    margin-top: 20px;
+    border-top: #ebebeb 1px solid;
+}

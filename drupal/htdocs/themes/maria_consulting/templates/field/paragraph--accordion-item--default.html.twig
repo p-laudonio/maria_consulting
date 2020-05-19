@@ -39,15 +39,16 @@
  */
 #}
 {% block paragraph %}
-        <div class="panel panel-default paragraph-accordion" id="paragraph-accordion">
+        <div property="schema:step" typeof="schema:HowToStep" class="panel panel-default paragraph-accordion" id="paragraph-accordion">
             <div class="panel-heading">
-                <h4 class="panel-title"><a data-parent="#paragraph-accordion" data-toggle="collapse"
-                                           href="#par-{{ paragraph.id() }}">{{ content.field_panel_title }}</a></h4>
+                <h4 class="panel-title"><a property="schema:url" data-parent="#paragraph-accordion" data-toggle="collapse"
+                                           href="#par-{{ paragraph.id() }}"><span property="schema:name">{{ content.field_panel_title }}</span></a></h4>
             </div>
             <div class="panel-collapse collapse in" id="par-{{ paragraph.id() }}">
                 <div class="panel-body">
                     {{ content.field_panel_body }}
                 </div>
+                <span property="schema:position" content="{{ accordion_item_pos }}" class="hidden"></span>
             </div>
         </div>
 {% endblock paragraph %}
