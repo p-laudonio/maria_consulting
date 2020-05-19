@@ -1,28 +1,26 @@
 <?php
-/**
- * @file
- * Contains \Drupal\maria_consulting\Plugin\Preprocess\Breadcrumb.
- */
 
 namespace Drupal\maria_consulting\Plugin\Preprocess;
 
 use Drupal\maria_custom\MariaCustomService;
-use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\bootstrap\Utility\Variables;
-use Drupal\Core\Template\Attribute;
-use Drupal\Core\Url;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\bootstrap\Utility\Element;
+use Drupal\bootstrap\Utility\Variables;
+use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
+use Drupal\bootstrap\Plugin\Preprocess\PreprocessInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Pre-processes variables for the "breadcrumb" theme hook.
+ * Pre-processes variables for the "paragraph" theme hook.
  *
  * @ingroup plugins_preprocess
  *
- * @BootstrapPreprocess("breadcrumb")
+ * @see paragraph.html.twig
+ *
+ * @BootstrapPreprocess("paragraph")
  */
-class Breadcrumb extends \Drupal\bootstrap\Plugin\Preprocess\Breadcrumb implements ContainerFactoryPluginInterface
+class Paragraph extends PreprocessBase implements PreprocessInterface, ContainerFactoryPluginInterface
 {
 
   /**
@@ -79,38 +77,22 @@ class Breadcrumb extends \Drupal\bootstrap\Plugin\Preprocess\Breadcrumb implemen
    */
   public function preprocessVariables(Variables $variables)
   {
-    parent::preprocessVariables($variables);
-
-    if (!empty($variables['breadcrumb'])) {
-      $current_url = Url::fromRoute('<current>')->toString();
-      foreach ($variables['breadcrumb'] as $index => $item) {
-        $item_url = $variables['breadcrumb'][$index]['url'];
-        if ($item_url == $current_url) {
-          $variables['breadcrumb'][$index] = [
-            'text' => $variables['breadcrumb'][$index]['text'],
-            'url' => false,
-            'attributes' => new Attribute(['class' => ['active']]),
-          ];
-        }
-      }
-      /** @var ContentEntityInterface $contentEntity */
-      if ($contentEntity = $this->route_match->getParameter('node')) {
-      }
-      else
-      {
-        $contentEntity = $this->route_match->getParameter('taxonomy_term');
-      }
-      $rdf_type = '';
-      if ($contentEntity && $contentEntity instanceof ContentEntityInterface) {
-        $rdf_type = $this->customService->getRdfType($contentEntity);
-        // Set the Breadcrumd as Property ONLY for WebPage.
-        if ($rdf_type == 'WebPage') {
-          $variables->setAttribute('property', 'schema:breadcrumb');
-        }
-      }
-      $variables['current_url'] = $current_url;
-      $variables['rdf_type'] = $rdf_type;
-    }
 
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function preprocessElement(Element $element, Variables $variables)
+  {
+    $arr = $element->getArray();
+    /** @var \Drupal\paragraphs\Entity\Paragraph $paragraph */
+    $paragraph = $arr['#paragraph'];
+    static $accordion_item_pos = 1;
+    if ($paragraph->bundle() == 'accordion_item') {
+      $variables['accordion_item_pos'] = $accordion_item_pos;
+      $accordion_item_pos++;
+    }
+  }
+
 }

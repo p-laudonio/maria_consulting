@@ -79,7 +79,7 @@ class ViewsViewUnformatted extends PreprocessBase implements PreprocessInterface
     $view = $variables['view'];
     $rows = $variables['rows'];
 
-    if ($view->id() == 'my_work_experience' && $view->current_display == 'my_recent_roles_block' ) {
+    if ($view->id() == 'my_work_experience') {
 
       /** @var \Drupal\user\Entity\User $user */
       $user = \Drupal::routeMatch()->getParameter('user');
@@ -94,35 +94,22 @@ class ViewsViewUnformatted extends PreprocessBase implements PreprocessInterface
 
       foreach ($rows as $id => $row) {
 
-        /** @var \Drupal\node\Entity\Node $node */
-        $node = $row['content']['#row']->_entity;
+        if (!empty($row['content']['#node'])) {
+          /** @var \Drupal\node\Entity\Node $node */
+          $node = $row['content']['#node'];
+        }
+        else {
+          /** @var \Drupal\node\Entity\Node $node */
+          $node = $row['content']['#row']->_entity;
+        }
 
         // Show the Company Work Experience only on the user page.
         $variables['rows'][$id]['company_details'] = false;
         $variables['rows'][$id]['full_name'] = $full_name;
-        if ($full_name && $node->hasField('field_company_details')) {
-          $values = explode(',', $node->field_company_details->value);
-          if (count($values) > 3) {
-            list($company, $address, $city, $post_code) = $values;
-            $variables['rows'][$id]['company_details'] = [
-              'company' => $company,
-              'address' => $address,
-              'city' => $city,
-              'post_code' => $post_code
-            ];
-          }
-        }
 
-        $periods = $node->field_period->getValue();
-        if ($full_name && !empty($periods)) {
-          $variables['rows'][$id]['company_details']['start'] = $periods[0]['value'];
-          $variables['rows'][$id]['company_details']['end'] = $periods[0]['end_value'];
-        }
-        else {
-          $variables['rows'][$id]['company_details']['start'] = false;
-          $variables['rows'][$id]['company_details']['end'] = false;
-        }
+        if (($node instanceof Node) == false && $node->bundle() != 'work_experience') continue;
 
+        $variables['rows'][$id]['company_details'] = $this->customService->getCompanydetails($node);
       }
 
     }
