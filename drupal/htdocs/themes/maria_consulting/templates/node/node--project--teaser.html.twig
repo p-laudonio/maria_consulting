@@ -82,7 +82,7 @@
     {% set short_page_title = node.title.value %}
 {% endif %}
 
-<article{{ attributes.addClass(classes) }}>
+<article{{ attributes.addClass(classes) }} typeof="WebPage">
     <div{{ content_attributes.addClass(['teaser-content']) }}>
         <figure class="img-polaroid">{{ content.field_image }}</figure>
         <p class="font-1"><a href="{{ url }}" title="{{ content.field_job[0]['#title'] }}"

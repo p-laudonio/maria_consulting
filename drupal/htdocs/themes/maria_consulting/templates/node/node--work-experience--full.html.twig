@@ -73,40 +73,33 @@
     view_mode ? view_mode|clean_class,
     'clearfix',
 ] %}
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4 class="panel-title"><a data-parent="#accordion" data-toggle="collapse"
-                                   href="#node-{{ node.id() }}">{{ label }}</a></h4>
-    </div>
-    <div class="panel-collapse collapse in" id="node-{{ node.id() }}">
-        <div class="panel-body">
-            <article class="work-experience" property="schema:alumniOf" typeof="schema:Organization">
-                {{ content.field_company_details }}
-                <div class="organization-role" property="schema:member" typeof="schema:OrganizationRole">
-              <span property="schema:member" typeof="schema:Person" class="hidden">
-                  <span property="schema:name">Pasquale Laudonio</span>
-                  <span property="schema:sameAs">/company</span>
-              </span>
-                    <div class="field field--label-inline">
-                        <div class="field--label">{{ content.field_job_title|field_label }}</div>
-                        <div class="field--item">
-                            <a href="{{ url }}" content="{{ content.field_job_title|field_value }}"
-                               property="schema:roleName">{{ content.field_job_title|field_value }}</a>
-                            <span property="schema:sameAs" class="hidden">{{ url }}</span>
-                        </div>
-                    </div>
-                    <div class="field field--label-inline">
-                        <div class="field--label">{{ content.field_period|field_label }}</div>
-                        <div class="field--item">From <span
-                                    property="schema:startDate">{{ content.field_period[0]['start_date'] }}</span>
-                            To <span property="schema:endDate">{{ content.field_period[0]['end_date'] }}</span>
-                        </div>
-                    </div>
+
+{{ attach_library('maria_consulting/work_experience') }}
+
+<div about="/company" typeof="schema:Person" class="clearfix">
+    <span property="schema:name" class="hidden">Pasquale Laudonio</span>
+    <article class="work-experience full clearfix" property="schema:alumniOf" typeof="schema:Organization">
+        {{ content.field_company_details }}
+        <div class="organization-role" property="schema:member" typeof="schema:OrganizationRole">
+          <span property="schema:member" typeof="schema:Person" class="hidden">
+              <span property="schema:name">Pasquale Laudonio</span>
+              <span property="schema:sameAs">/company</span>
+          </span>
+            <div class="field field--label-inline">
+                <div class="field--label">{{ content.field_job_title|field_label }}</div>
+                <div class="field--item" property="schema:roleName">{{ content.field_job_title|field_value }}</div>
+            </div>
+            <div class="field field--label-inline">
+                <div class="field--label">{{ content.field_period|field_label }}</div>
+                <div class="field--item">From <span
+                            property="schema:startDate">{{ content.field_period[0]['start_date'] }}</span>
+                    To <span property="schema:endDate">{{ content.field_period[0]['end_date'] }}</span>
                 </div>
-                {{ content.field_technologies }}
-                {{ content.field_project_description }}
-                {{ content.field_responsibility }}
-            </article>
+            </div>
         </div>
-    </div>
+        {{ content.body }}
+        {{ content.field_technologies }}
+        {{ content.field_project_description }}
+        {{ content.field_responsibility }}
+    </article>
 </div>

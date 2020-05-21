@@ -14,3 +14,7 @@ user:
   css:
     theme:
       css/user.css: {}
+work_experience:
+  css:
+    theme:
+      css/work_experience.css: {}

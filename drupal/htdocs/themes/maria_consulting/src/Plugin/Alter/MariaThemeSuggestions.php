@@ -107,6 +107,12 @@ class MariaThemeSuggestions extends ThemeSuggestions implements ContainerFactory
 
     }
 
+    elseif ($hook == 'views_view' && !empty($variables['view'])) {
+      /** @var \Drupal\views\ViewExecutable $view */
+      $view = $variables['view'];
+      $suggestions[] = $variables['theme_hook_original'] . '__' . $view->id() . '__' . $view->current_display;
+    }
+
     elseif ($hook == 'search_result') {
       /** @var Node $node */
       $node = !empty($variables['result']['node']) ? $variables['result']['node'] : false;

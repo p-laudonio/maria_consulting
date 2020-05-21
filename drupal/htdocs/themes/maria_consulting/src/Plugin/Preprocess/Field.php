@@ -85,7 +85,7 @@ class Field extends PreprocessBase implements PreprocessInterface, ContainerFact
 
     if ($element['#field_name'] == "field_job_title") {
       $current_nid = 0;
-      if ($current_node = \Drupal::routeMatch()->getParameter('node')) {
+      if ($current_node = $this->route_match->getParameter('node')) {
         $current_nid = $current_node->id();
       }
       $node = $element['#object'];
@@ -145,6 +145,18 @@ class Field extends PreprocessBase implements PreprocessInterface, ContainerFact
         }
 
       }
+    }
+    elseif ($element['#field_name'] == 'field_company_details') {
+      $node = $element['#object'];
+      $variables['items'][0]['company_details'] = $this->customService->getCompanydetails($node);
+    }
+
+    elseif ($element['#field_name'] == 'description' && $term = $this->route_match->getParameter('taxonomy_term')) {
+      if($variables->hasAttribute('property')) {
+        $variables->removeAttribute('property');
+      }
+      $term_url = $term->toUrl()->toString();
+      $variables->setAttribute('about', $term_url);
     }
     parent::preprocessVariables($variables);
   }

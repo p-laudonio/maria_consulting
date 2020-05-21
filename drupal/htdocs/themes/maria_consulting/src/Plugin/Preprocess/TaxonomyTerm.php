@@ -13,15 +13,15 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Pre-processes variables for the "item_list" theme hook.
+ * Pre-processes variables for the "taxonomy_term" theme hook.
  *
  * @ingroup plugins_preprocess
  *
- * @see node.html.twig
+ * @see taxonomy-term.html.twig
  *
- * @BootstrapPreprocess("node")
+ * @BootstrapPreprocess("taxonomy_term")
  */
-class Node extends PreprocessBase implements PreprocessInterface, ContainerFactoryPluginInterface {
+class TaxonomyTerm extends PreprocessBase implements PreprocessInterface, ContainerFactoryPluginInterface {
 
   /**
    * Current Route Match.
@@ -84,36 +84,14 @@ class Node extends PreprocessBase implements PreprocessInterface, ContainerFacto
     $arr = $element->getArray();
     $view_mode = !empty($arr['#view_mode']) ? $arr['#view_mode'] : '';
 
-    /** @var ContentEntityInterface $node */
-    $node = isset($arr['#node']) ? $arr['#node'] : null;
+    /** @var ContentEntityInterface $taxonomy_term */
+    $taxonomy_term = isset($arr['#taxonomy_term']) ? $arr['#taxonomy_term'] : null;
 
     // We need to add the RDF properties only when the node view mode is full.
-    if ($view_mode == 'full' && !empty($node) && $node instanceof ContentEntityInterface) {
-      $rdf_type = $this->customService->getRdfType($node);
-
-      if($node->bundle() == 'service') {
-        $variables->setAttribute('typeof', 'schema:' . $rdf_type);
-      }
-      elseif ($node->bundle() == 'project') {
-        $variables->setAttribute('typeof', 'schema:' . $rdf_type);
-        $variables['work_experience'] = false;
-        if ($job_node = $this->customService->getFirstReferencedEntity($node, 'field_job')) {
-          $company_details = $this->customService->getCompanydetails($job_node);
-          $variables['work_experience'] = [
-            'url' => $company_details['company_url'],
-            'title' => $job_node->label(),
-            'company' => $company_details['company'] . ' in ' . $company_details['city'],
-            'job_title' => $company_details['job_title'],
-          ];
-        }
-      }
-
-      $variables['rdf_type'] = $rdf_type;
-      $variables['node_name'] = $node->label();
-      $variables['node_description'] = $this->customService->getTeaserDescription($node);
-      $variables['node_date_created'] = $this->customService->getDateCreated($node);
-      $variables['node_date_modified'] = $this->customService->getDateModified($node);
-    } // Node is in view mode full.
+    if ($view_mode == 'full' && !empty($taxonomy_term) && $taxonomy_term instanceof ContentEntityInterface) {
+      $rdf_type = $this->customService->getRdfType($taxonomy_term);
+      $variables->setAttribute('typeof', 'schema:' . $rdf_type);
+    }
 
   }
 

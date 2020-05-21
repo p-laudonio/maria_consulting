@@ -12,6 +12,7 @@ use Drupal\bootstrap\Utility\Variables;
 use Drupal\Core\Render\Markup;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\user\Entity\User;
+use Drupal\Core\Url;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -81,6 +82,7 @@ class Page extends \Drupal\bootstrap\Plugin\Preprocess\Page implements Container
    */
   public function preprocess(array &$variables, $hook, array $info)
   {
+    $variables['page']['current_url'] = Url::fromRoute('<current>')->toString();
     $variables['page']['header_image'] = FALSE;
     $variables['page_name'] = 'page-generic';
     $is_front = \Drupal::service('path.matcher')->isFrontPage();

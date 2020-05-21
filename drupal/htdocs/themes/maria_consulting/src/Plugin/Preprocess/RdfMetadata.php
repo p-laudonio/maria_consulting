@@ -3,25 +3,26 @@
 namespace Drupal\maria_consulting\Plugin\Preprocess;
 
 use Drupal\maria_custom\MariaCustomService;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\bootstrap\Utility\Element;
 use Drupal\bootstrap\Utility\Variables;
+use Drupal\Core\Template\Attribute;
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Pre-processes variables for the "item_list" theme hook.
+ * Pre-processes variables for the "rdf_metadata" theme hook.
  *
  * @ingroup plugins_preprocess
  *
- * @see node.html.twig
+ * @see rdf_metadata.html.twig
  *
- * @BootstrapPreprocess("node")
+ * @BootstrapPreprocess("rdf_metadata")
  */
-class Node extends PreprocessBase implements PreprocessInterface, ContainerFactoryPluginInterface {
+class RdfMetadata extends PreprocessBase implements PreprocessInterface, ContainerFactoryPluginInterface {
 
   /**
    * Current Route Match.
@@ -74,46 +75,28 @@ class Node extends PreprocessBase implements PreprocessInterface, ContainerFacto
    * {@inheritdoc}
    */
   public function preprocessVariables(Variables $variables) {
-
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function preprocessElement(Element $element, Variables $variables) {
-    $arr = $element->getArray();
-    $view_mode = !empty($arr['#view_mode']) ? $arr['#view_mode'] : '';
-
-    /** @var ContentEntityInterface $node */
-    $node = isset($arr['#node']) ? $arr['#node'] : null;
-
-    // We need to add the RDF properties only when the node view mode is full.
-    if ($view_mode == 'full' && !empty($node) && $node instanceof ContentEntityInterface) {
-      $rdf_type = $this->customService->getRdfType($node);
-
-      if($node->bundle() == 'service') {
-        $variables->setAttribute('typeof', 'schema:' . $rdf_type);
+    /** @var ContentEntityInterface $contentEntity */
+    if ($contentEntity = $this->route_match->getParameter('taxonomy_term')) {
+      if( $contentEntity->bundle() == 'tags') {
+        $image_info_default = ['field_service_image', 'original'];
+        $image_info = $this->customService->getImageData($contentEntity, $image_info_default);
+        $new_atr = new Attribute();
+        $new_atr->setAttribute('property', 'schema:primaryImageOfPage');
+        $new_atr->setAttribute('content', $image_info['url']);
+        $variables['metadata'][] = $new_atr;
       }
-      elseif ($node->bundle() == 'project') {
-        $variables->setAttribute('typeof', 'schema:' . $rdf_type);
-        $variables['work_experience'] = false;
-        if ($job_node = $this->customService->getFirstReferencedEntity($node, 'field_job')) {
-          $company_details = $this->customService->getCompanydetails($job_node);
-          $variables['work_experience'] = [
-            'url' => $company_details['company_url'],
-            'title' => $job_node->label(),
-            'company' => $company_details['company'] . ' in ' . $company_details['city'],
-            'job_title' => $company_details['job_title'],
-          ];
-        }
-      }
+      else {
+        $new_atr = new Attribute();
+        $new_atr->setAttribute('property', 'schema:name');
+        $new_atr->setAttribute('content', $contentEntity->label());
+        $variables['metadata'][] = $new_atr;
 
-      $variables['rdf_type'] = $rdf_type;
-      $variables['node_name'] = $node->label();
-      $variables['node_description'] = $this->customService->getTeaserDescription($node);
-      $variables['node_date_created'] = $this->customService->getDateCreated($node);
-      $variables['node_date_modified'] = $this->customService->getDateModified($node);
-    } // Node is in view mode full.
+        $new_atr = new Attribute();
+        $new_atr->setAttribute('property', 'schema:description');
+        $new_atr->setAttribute('content', $contentEntity->getDescription());
+        $variables['metadata'][] = $new_atr;
+      }
+    }
 
   }
 

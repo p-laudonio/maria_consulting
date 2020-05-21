@@ -65,41 +65,45 @@
  *   in different view modes.
  */
 #}
-{%
-  set classes = [
-  node.bundle|clean_class,
-  node.isPromoted() ? 'is-promoted',
-  node.isSticky() ? 'is-sticky',
-  not node.isPublished() ? 'is-unpublished',
-  view_mode ? view_mode|clean_class,
-  'clearfix',
-]
-%}
+{% set classes = [
+    node.bundle|clean_class,
+    node.isPromoted() ? 'is-promoted',
+    node.isSticky() ? 'is-sticky',
+    not node.isPublished() ? 'is-unpublished',
+    view_mode ? view_mode|clean_class,
+    'clearfix',
+] %}
 
 {{ attach_library('maria_consulting/service') }}
 
 <article{{ attributes.addClass(classes) }}>
-
-  {{ title_prefix }}
-  {% if label and not page %}
-    <h2{{ title_attributes }}>
-      <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-    </h2>
-  {% endif %}
-  {{ title_suffix }}
-
-  {% if display_submitted %}
-    <footer>
-      {{ author_picture }}
-      <div{{ author_attributes.addClass('author') }}>
-        {% trans %}Submitted by {{ author_name }} on {{ date }}{% endtrans %}
-        {{ metadata }}
-      </div>
-    </footer>
-  {% endif %}
-
-  <div{{ content_attributes.addClass('content') }}>
-    {{ content }}
-  </div>
-
+    {% if rdf_type == 'HowTo' %}
+        <span property="schema:tool" class="hidden">Text Editor</span>
+        <span property="schema:supply" typeof="schema:HowToSupply" class="hidden">
+  <span property="schema:name">Source code</span>
+  <span property="schema:sameAs">https://github.com/p-laudonio/maria_consulting</span>
+  </span>
+        <span property="schema:totalTime" class="hidden" content="PT2H"></span>
+        <span property="schema:name" content="{{ node_name }}" class="hidden"></span>
+    {% else %}
+        <span property="schema:datePublished" content="{{ node_date_created }}" class="hidden"></span>
+        <span property="schema:headline" content="{{ node_name }}" class="hidden"></span>
+        <span property="schema:mainEntityOfPage" content="Drupal 8" class="hidden"></span>
+    {% endif %}
+    <span property="schema:description" content="{{ node_description }}" class="hidden"></span>
+    <span property="schema:publisher" typeof="schema:Organization" class="hidden">
+    <span property="schema:name">Maria Consulting LTD</span>
+    <link property="schema:url" href="http://maria-consulting.co.uk/"/>
+    <span property="schema:logo" typeof="schema:ImageObject">
+    <link property="schema:url" href="http://maria-consulting.co.uk/logo.png"/>
+    </span>
+    </span>
+    <span property="schema:author" typeof="schema:Person" class="hidden">
+  <span property="schema:name">Pasquale Laudonio</span>
+  </span>
+    <span property="schema:dateCreated" content="{{ node_date_created }}" class="hidden"></span>
+    <span property="schema:dateModified" content="{{ node_date_modified }}" class="hidden"></span>
+    <div{{ content_attributes.addClass('content') }}>
+        {{ content }}
+    </div>
 </article>
